@@ -1,0 +1,428 @@
+@import 'tailwindcss';
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   La Casa del Estratega — sistema visual
+   Los valores de color vienen literalmente de docs/03-marca-y-estilo.md.
+   Registro: cuero, madera, papel grueso, tinta. Nada de SaaS.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* Base */
+  --color-crema: #faf3e8;
+  --color-beige: #f0e1cb;
+  --color-beige-borde: #dfc9ac;
+
+  /* Marca */
+  --color-terracota: #a8452c;
+  --color-terracota-osc: #7c2f1d;
+  --color-rojo: #c1121f;
+  --color-dorado: #c08a2e;
+
+  /* Tinta */
+  --color-carbon: #1e1a17;
+  --color-marron: #3d2f26;
+  --color-gris: #7a6a5c;
+
+  /* Borde para la sección oscura */
+  --color-borde-oscuro: #3a322b;
+
+  /* Estado */
+  --color-exito: #2f6b4f;
+  --color-error: #b02a1f;
+
+  /* Tipografía: las variables las inyecta next/font en el <html> */
+  --font-display: var(--fuente-display), 'Arial Black', sans-serif;
+  --font-sans: var(--fuente-cuerpo), system-ui, sans-serif;
+
+  /* Escala tipográfica de docs/03 (mobile → desktop con clamp) */
+  --text-h1: clamp(2.5rem, 1.6rem + 4.5vw, 4.5rem);
+  --text-h2: clamp(1.875rem, 1.35rem + 2.6vw, 3rem);
+  --text-h3: clamp(1.25rem, 1.1rem + 0.75vw, 1.75rem);
+  --text-cuerpo: clamp(1rem, 0.98rem + 0.2vw, 1.0625rem);
+}
+
+/* ── Reglas base ─────────────────────────────────────────────────────────── */
+
+:root {
+  /* Sin modo oscuro: la identidad es cálida y un modo oscuro a medias la
+     empeora. Se fija explícitamente para que ningún navegador la invierta. */
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Compensa la altura del encabezado fijo al saltar a un ancla. */
+  scroll-padding-top: 5rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-crema);
+  color: var(--color-marron);
+  font-family: var(--font-sans);
+  font-size: var(--text-cuerpo);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* Deja espacio para la barra de compra fija en mobile. */
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--color-carbon);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+/* Los números —precios sobre todo— con ancho fijo para que no bailen. */
+.numeros,
+.precio,
+input[type='number'],
+time {
+  font-variant-numeric: tabular-nums;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* Ancho máximo de párrafo: 68 caracteres (docs/03). */
+.medida {
+  max-width: 68ch;
+}
+
+/* ── Foco visible en TODO lo interactivo (docs/03, accesibilidad) ────────── */
+
+:focus-visible {
+  outline: 3px solid var(--color-dorado);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Nunca quitar el foco sin reemplazarlo. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ── Textura de papel ────────────────────────────────────────────────────── */
+/* Grano SVG al 3%: le da calidez de papel sin que se note como "efecto". */
+
+.grano::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27140%27%20height%3D%27140%27%3E%3Cfilter%20id%3D%27r%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.85%27%20numOctaves%3D%273%27%20stitchTiles%3D%27stitch%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27140%27%20height%3D%27140%27%20filter%3D%27url%28%23r%29%27%2F%3E%3C%2Fsvg%3E');
+  background-repeat: repeat;
+  z-index: 0;
+}
+
+/* ── Sombra dura tipo "block" ────────────────────────────────────────────── */
+/* Sin difuminado: offset sólido, como una tinta impresa mal registrada. */
+
+.sombra-block {
+  box-shadow: 3px 3px 0 var(--color-carbon);
+}
+
+.sombra-block-sm {
+  box-shadow: 2px 2px 0 var(--color-carbon);
+}
+
+.sombra-block-dorada {
+  box-shadow: 3px 3px 0 var(--color-dorado);
+}
+
+.sombra-block-clara {
+  box-shadow: 3px 3px 0 var(--color-crema);
+}
+
+/* ── Patrón de tablero ───────────────────────────────────────────────────── */
+/* Se usa como separador entre secciones y como marca de agua muy tenue.
+   Nunca como fondo completo. */
+
+.tablero-franja {
+  height: 12px;
+  background-image:
+    linear-gradient(45deg, var(--color-carbon) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--color-carbon) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--color-carbon) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--color-carbon) 75%);
+  background-size: 24px 24px;
+  background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+  opacity: 0.9;
+}
+
+.tablero-marca-agua {
+  background-image:
+    linear-gradient(45deg, currentColor 25%, transparent 25%),
+    linear-gradient(-45deg, currentColor 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, currentColor 75%),
+    linear-gradient(-45deg, transparent 75%, currentColor 75%);
+  background-size: 96px 96px;
+  background-position: 0 0, 0 48px, 48px -48px, -48px 0;
+  opacity: 0.03;
+}
+
+/* ── Movimiento: discreto y funcional ────────────────────────────────────── */
+
+.revelar {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 400ms ease-out,
+    transform 400ms ease-out;
+  will-change: opacity, transform;
+}
+
+.revelar.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Elevación mínima al pasar el mouse por una card. */
+.card-elevable {
+  transition:
+    transform 160ms ease-out,
+    box-shadow 160ms ease-out;
+}
+
+@media (hover: hover) {
+  .card-elevable:hover {
+    transform: translateY(-2px);
+    box-shadow: 5px 5px 0 var(--color-carbon);
+  }
+
+  .card-elevable-dorada:hover {
+    box-shadow: 5px 5px 0 var(--color-dorado);
+  }
+}
+
+/* Respetar prefers-reduced-motion: se desactiva absolutamente todo. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .revelar {
+    opacity: 1;
+    transform: none;
+  }
+
+  .card-elevable:hover {
+    transform: none;
+  }
+}
+
+/* ── Botones ─────────────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  /* Target táctil mínimo 44×44 (docs/03, accesibilidad). */
+  min-height: 44px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  letter-spacing: 0.01em;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    transform 120ms ease-out,
+    box-shadow 120ms ease-out,
+    background-color 120ms ease-out;
+}
+
+.btn-primario {
+  background-color: var(--color-terracota);
+  color: var(--color-crema);
+  box-shadow: 3px 3px 0 var(--color-carbon);
+}
+
+.btn-primario:hover:not(:disabled) {
+  background-color: var(--color-terracota-osc);
+}
+
+.btn-primario:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--color-carbon);
+}
+
+.btn-secundario {
+  background-color: transparent;
+  color: var(--color-carbon);
+  border: 2px solid var(--color-carbon);
+}
+
+.btn-secundario:hover:not(:disabled) {
+  background-color: var(--color-carbon);
+  color: var(--color-crema);
+}
+
+.btn-sobre-oscuro {
+  background-color: var(--color-crema);
+  color: var(--color-carbon);
+  box-shadow: 3px 3px 0 var(--color-dorado);
+}
+
+.btn-sobre-oscuro:hover:not(:disabled) {
+  background-color: #fff;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  box-shadow: none;
+  background-color: var(--color-gris);
+  color: var(--color-crema);
+}
+
+/* ── Formularios ─────────────────────────────────────────────────────────── */
+
+.campo {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.625rem 0.75rem;
+  background-color: #fff;
+  border: 1px solid var(--color-beige-borde);
+  border-radius: 8px;
+  color: var(--color-carbon);
+  font-size: 1rem; /* 16px: evita que iOS haga zoom al enfocar */
+  transition: border-color 120ms ease-out;
+}
+
+.campo:hover {
+  border-color: var(--color-gris);
+}
+
+.campo[aria-invalid='true'] {
+  border-color: var(--color-error);
+  border-width: 2px;
+}
+
+.campo::placeholder {
+  color: var(--color-gris);
+  opacity: 0.8;
+}
+
+select.campo {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%233D2F26' stroke-width='2'%3E%3Cpath d='M3 6l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.25rem;
+}
+
+.etiqueta {
+  display: block;
+  margin-bottom: 0.3125rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-marron);
+}
+
+.error-campo {
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-error);
+}
+
+/* Honeypot: invisible para personas, visible para bots (docs/06 §5). */
+.trampa {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── Utilidades de composición ───────────────────────────────────────────── */
+
+.contenedor {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .contenedor {
+    padding-inline: 2rem;
+  }
+}
+
+.seccion {
+  padding-block: clamp(3.5rem, 2rem + 6vw, 6.5rem);
+}
+
+/* Etiqueta pequeña sobre los títulos de sección. */
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-terracota);
+}
+
+.eyebrow-claro {
+  color: var(--color-dorado);
+}
+
+/* Deja de leerse por lector de pantalla pero sigue accesible al teclado. */
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.saltar-al-contenido {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background: var(--color-carbon);
+  color: var(--color-crema);
+  border-radius: 8px;
+  transition: top 120ms ease-out;
+}
+
+.saltar-al-contenido:focus {
+  top: 1rem;
+}
+
+/* La barra de compra fija en mobile no debe tapar el final de la página. */
+.espacio-barra-movil {
+  height: 5.5rem;
+}
+
+@media (min-width: 768px) {
+  .espacio-barra-movil {
+    height: 0;
+  }
+}
