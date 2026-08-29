@@ -13,7 +13,7 @@ import { SITIO_URL } from '@/lib/sitio'
 /**
  * POST /api/admin/acciones — mutaciones del panel.
  *
- * La sesión ya la verificó el middleware antes de llegar acá. Lo que se agrega
+ * La sesión ya la verificó el proxy (src/proxy.ts) antes de llegar acá. Lo que se agrega
  * en este archivo es la protección CSRF (docs/06-seguridad.md §7): token de
  * doble envío MÁS verificación de origen. Con las dos, un sitio ajeno no puede
  * hacer que el navegador de Felipe cambie el stock sin que él se entere.

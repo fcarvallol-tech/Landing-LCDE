@@ -78,6 +78,12 @@ export function PanelCarrito() {
 
   const vacio = entradas.length === 0
 
+  // Si la persona vacía el carrito mientras llena sus datos, no tiene sentido
+  // dejarla frente a un formulario que no puede enviar: se vuelve al paso 1.
+  useEffect(() => {
+    if (vacio && paso === 'entrega') setPaso('carrito')
+  }, [vacio, paso])
+
   return (
     <>
       {/* Telón */}

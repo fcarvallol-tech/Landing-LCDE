@@ -6,7 +6,7 @@ import { ETIQUETA_ESTADO, type EstadoPedido } from '@/lib/tipos'
 /**
  * GET /api/admin/csv — exporta los pedidos a CSV (docs/04-logistica.md).
  *
- * La sesión ya la verificó el middleware.
+ * La sesión ya la verificó el proxy (src/proxy.ts).
  *
  * Se escapa cada celda con comillas y, si empieza con =, +, - o @, se le
  * antepone un apóstrofo: es la defensa contra inyección de fórmulas cuando

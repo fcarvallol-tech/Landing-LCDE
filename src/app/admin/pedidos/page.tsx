@@ -14,7 +14,7 @@ import { Escudo } from '@/components/Piezas'
 /**
  * Panel de pedidos y stock.
  *
- * El middleware ya verificó la sesión antes de que se ejecute nada de acá:
+ * El proxy (src/proxy.ts) ya verificó la sesión antes de que se ejecute nada de acá:
  * sin cookie válida, esta página nunca llega a renderizarse.
  */
 export const metadata: Metadata = {

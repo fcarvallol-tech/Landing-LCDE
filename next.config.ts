@@ -2,7 +2,7 @@ import type { NextConfig } from 'next'
 
 /**
  * Cabeceras de seguridad aplicadas a todas las rutas (docs/06-seguridad.md §6).
- * La Content-Security-Policy no vive acá: se arma en `src/middleware.ts` porque
+ * La Content-Security-Policy no vive acá: se arma en `src/proxy.ts` porque
  * necesita un nonce distinto por request.
  */
 const CABECERAS_SEGURIDAD = [

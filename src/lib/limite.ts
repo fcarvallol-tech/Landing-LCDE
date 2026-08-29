@@ -73,17 +73,35 @@ export function reiniciarLimite(clave: string): void {
 }
 
 /**
- * IP del cliente. En Vercel llega en x-forwarded-for; se toma la primera, que
- * es la del visitante real.
+ * IP del cliente.
+ *
+ * El orden importa por seguridad: `x-forwarded-for` lo puede falsificar
+ * cualquiera que llame directo al servidor, así que se prefieren las cabeceras
+ * que pone la propia plataforma y que el cliente no controla.
+ *
+ *   1. `x-vercel-forwarded-for` — la escribe Vercel, es de confianza.
+ *   2. `x-real-ip` — la escribe el proxy.
+ *   3. `x-forwarded-for` — último recurso; se toma la primera de la lista.
+ *
+ * Si alguien falsifica la cabecera para saltarse el límite, lo único que logra
+ * es saltarse el límite: no hay ninguna decisión de seguridad que dependa de
+ * este valor más allá del conteo.
  *
  * Ojo: la IP nunca se guarda en la base ni se loguea (docs/06 §8). Solo vive
  * en memoria como clave del limitador.
  */
 export function ipDe(cabeceras: Headers): string {
+  const deVercel = cabeceras.get('x-vercel-forwarded-for')?.trim()
+  if (deVercel) return deVercel.split(',')[0]?.trim() || deVercel
+
+  const real = cabeceras.get('x-real-ip')?.trim()
+  if (real) return real
+
   const reenviada = cabeceras.get('x-forwarded-for')
   if (reenviada) {
     const primera = reenviada.split(',')[0]?.trim()
     if (primera) return primera
   }
-  return cabeceras.get('x-real-ip')?.trim() || 'desconocida'
+
+  return 'desconocida'
 }

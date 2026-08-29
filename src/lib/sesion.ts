@@ -6,7 +6,7 @@
  * localStorage: si el navegador no puede leerlo, un XSS tampoco.
  *
  * Se usa Web Crypto (no `node:crypto`) a propósito: así este módulo funciona
- * igual en el middleware —que corre en el runtime Edge— y en las rutas de API.
+ * igual en el proxy —que corre en el runtime Edge— y en las rutas de API.
  */
 
 export const COOKIE_SESION = 'lcde_admin'

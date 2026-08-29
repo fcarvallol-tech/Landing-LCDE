@@ -40,7 +40,6 @@ export function FormularioEntrega({ onVolver }: { onVolver: () => void }) {
   const [esRegalo, setEsRegalo] = useState(false)
 
   const montadoEn = useRef<number>(Date.now())
-  const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
     montadoEn.current = Date.now()
@@ -195,7 +194,7 @@ export function FormularioEntrega({ onVolver }: { onVolver: () => void }) {
   })
 
   return (
-    <form ref={formRef} onSubmit={enviar} noValidate className="flex flex-col gap-4">
+    <form onSubmit={enviar} noValidate className="flex flex-col gap-4">
       <button
         type="button"
         onClick={onVolver}
@@ -213,9 +212,19 @@ export function FormularioEntrega({ onVolver }: { onVolver: () => void }) {
         </div>
       )}
 
-      {/* Honeypot: fuera de pantalla, sin tabulación, invisible para lectores. */}
+      {/*
+        Honeypot: fuera de pantalla, sin tabulación e invisible para lectores
+        de pantalla. Un bot que rellena todo lo que encuentra lo delata.
+
+        La etiqueta dice explícitamente que no se complete y el campo no se
+        llama como ningún dato real: así el autocompletado del navegador o un
+        gestor de contraseñas no lo rellenan por su cuenta y dejan fuera a una
+        persona de verdad.
+      */}
       <div className="trampa" aria-hidden="true">
-        <label htmlFor={campoId('apellidoSegundo')}>Segundo apellido</label>
+        <label htmlFor={campoId('apellidoSegundo')}>
+          No completes este campo
+        </label>
         <input
           id={campoId('apellidoSegundo')}
           name="apellidoSegundo"

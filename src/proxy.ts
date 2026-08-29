@@ -2,7 +2,8 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { COOKIE_SESION, sesionValida } from '@/lib/sesion'
 
 /**
- * Middleware. Hace dos cosas:
+ * Proxy (lo que en versiones anteriores de Next.js se llamaba middleware).
+ * Hace dos cosas:
  *
  *  1. Protege /admin/* y /api/admin/* (docs/06-seguridad.md §7).
  *  2. Arma la Content-Security-Policy con un nonce distinto por petición
@@ -40,7 +41,7 @@ function construirCsp(nonce: string): string {
   ].join('; ')
 }
 
-export async function middleware(peticion: NextRequest) {
+export async function proxy(peticion: NextRequest) {
   const { pathname } = peticion.nextUrl
 
   // ── 1. Puerta del panel ───────────────────────────────────────────────────

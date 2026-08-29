@@ -25,7 +25,7 @@ import { ipDe, verificarLimite } from '@/lib/limite'
  * Mercado Pago espera el 200 en menos de 22 segundos y reintenta cada 15
  * minutos si no lo recibe. Por eso todo lo lento va después de responder.
  *
- * Este endpoint queda fuera del middleware de autenticación (tiene que poder
+ * Este endpoint queda fuera del proxy de autenticación (tiene que poder
  * llamarlo Mercado Pago), pero sí tiene rate limiting.
  */
 
