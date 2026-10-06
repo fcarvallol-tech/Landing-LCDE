@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 import { formatearPrecio, type Producto } from '@/lib/catalogo'
+import { calcularEnvio } from '@/lib/precios'
 import { FotoProducto } from '@/components/FotoProducto'
 import { useCarrito } from '@/components/CarritoProvider'
 import { agregarAlCarrito, verProducto } from '@/lib/eventos'
@@ -83,6 +84,14 @@ export function CardProducto({
         ? { texto: textoDestacado, clase: 'bg-[var(--color-terracota)] text-[var(--color-crema)]' }
         : null
 
+  // "Despacho gratis incluido": sale de calcularEnvio(), la misma función con
+  // que el servidor cobra, así que sigue sola a ENVIO_GRATIS_DESDE. Es un dato
+  // del precio, no urgencia ni marketing: va junto al precio, con contorno en
+  // vez de relleno, y nunca choca con la etiqueta de arriba (si compartieran
+  // fila, en las cards angostas se partiría en dos líneas y descuadraría los
+  // nombres entre cards). Sobre un producto agotado no aporta nada.
+  const incluyeDespacho = !agotado && calcularEnvio(producto.precio) === 0
+
   return (
     <article
       ref={cardRef}
@@ -108,10 +117,10 @@ export function CardProducto({
       <div className="flex flex-1 flex-col p-4 sm:p-5">
         {/* 2. Etiqueta. En grilla de varias columnas reserva su alto para que
                los nombres queden alineados entre cards. */}
-        <div className="sm:min-h-[1.625rem]">
+        <div className="mb-2 flex sm:min-h-[1.375rem]">
           {etiquetaVisible && (
             <span
-              className={`mb-2 inline-block rounded-md px-2 py-0.5 text-[11px] font-bold tracking-wider uppercase ${etiquetaVisible.clase}`}
+              className={`inline-block rounded-md px-2 py-0.5 text-[11px] font-bold tracking-wider uppercase ${etiquetaVisible.clase}`}
             >
               {etiquetaVisible.texto}
             </span>
@@ -129,16 +138,32 @@ export function CardProducto({
           )}
         </p>
 
-        {/* 5. Precio */}
-        <p className="precio mt-auto pt-4 text-[1.75rem] leading-none font-extrabold text-[var(--color-carbon)]">
-          {formatearPrecio(producto.precio)}
-        </p>
+        {/* 5. Precio, y si ya alcanza el despacho gratis, dicho al lado */}
+        {/* Alto mínimo igual en todas las cards, tenga o no la etiqueta, para
+            que los botones queden alineados en la misma fila. */}
+        <div className="mt-auto flex min-h-[2.125rem] items-center gap-3 pt-4 box-content">
+          <p className="precio text-[1.75rem] leading-none font-extrabold text-[var(--color-carbon)]">
+            {formatearPrecio(producto.precio)}
+          </p>
+          {incluyeDespacho && (
+            // Partida en dos líneas cortas para que quepa al lado del precio
+            // incluso en las cards más angostas (dos columnas, en tablet).
+            <span className="max-w-[8.5rem] rounded-md border border-[var(--color-exito)] px-2 py-0.5 text-[10.5px] leading-[1.2] font-bold tracking-wider text-[var(--color-exito)] uppercase">
+              Despacho gratis incluido
+            </span>
+          )}
+        </div>
 
         {/* 6. Botón */}
         {agotado ? (
-          <button type="button" disabled className="btn btn-primario mt-4 w-full">
-            Agotado
-          </button>
+          <>
+            <button type="button" disabled className="btn btn-primario mt-4 w-full">
+              Agotado
+            </button>
+            {/* Ocupa el lugar de "o agrégalo al carrito" para que el botón
+                quede a la misma altura que el de las otras cards. */}
+            <div className="mt-1.5 min-h-[44px]" aria-hidden="true" />
+          </>
         ) : (
           <>
             <Link

@@ -140,6 +140,14 @@ Ninguna contradice `docs/`; donde hubo ambigüedad, elegí la opción razonable 
 - **Una sola etiqueta por tarjeta**, en este orden de prioridad: Agotado → Últimas N unidades
   → Más elegido. Se quitó "Tope de gama" del Pack GM (`docs/12 §5` solo nombra las otras dos);
   el GM conserva su borde dorado.
+- **"Despacho gratis incluido" va junto al precio, no en la fila de etiquetas de arriba.** Se
+  calcula con `calcularEnvio()` (la misma función con que cobra el servidor), así que sigue
+  sola a `ENVIO_GRATIS_DESDE`: hoy la llevan el Pack IM y el Pack GM. Es un dato del precio, no
+  urgencia ni marketing, por eso va con contorno verde y no relleno, y no entra en la regla de
+  "una sola etiqueta". Arriba, junto a "Últimas N unidades", se partía en dos líneas en las
+  cards angostas y descuadraba los nombres; al lado del precio, en dos líneas cortas, cabe
+  incluso en tablet, y la fila del precio tiene el mismo alto en todas las cards para que los
+  botones queden alineados. En un producto agotado no se muestra.
 - **La edad recomendada va en la misma línea de "qué trae"** ("Tablero y piezas · desde 5
   años"), porque `docs/01` pide mostrarla y `docs/12` no deja espacio para otra línea. En
   `/jugadores` no se muestra.
