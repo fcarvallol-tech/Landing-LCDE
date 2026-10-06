@@ -7,8 +7,9 @@ import { ENVIO_GRATIS_DESDE } from '@/lib/logistica'
  * Un solo mensaje, fijo: sin rotación, sin cuenta regresiva, sin botón de
  * cerrar. No es sticky: lo único sticky es el encabezado que viene debajo.
  *
- * En un celular angosto la frase no cabe en una línea; cada mitad va en su
- * propio bloque que no se corta, para que si se parte, se parta por el punto.
+ * En un celular angosto la frase no cabe en una línea: cada mitad va en su
+ * propio bloque que no se corta, así se parte justo en el punto, y el punto
+ * se esconde para que no quede colgando al final de la primera línea.
  */
 export function BarraAnuncio() {
   return (
@@ -18,7 +19,7 @@ export function BarraAnuncio() {
           Despacho gratis sobre{' '}
           <span className="numeros">{formatearPrecio(ENVIO_GRATIS_DESDE)}</span>
         </span>
-        <span aria-hidden="true" className="text-[var(--color-dorado)]">
+        <span aria-hidden="true" className="hidden text-[var(--color-dorado)] min-[480px]:inline">
           ·
         </span>
         <span className="whitespace-nowrap">Entrega personal en Santiago oriente</span>

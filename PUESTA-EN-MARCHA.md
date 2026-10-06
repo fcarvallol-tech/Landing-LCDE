@@ -145,6 +145,15 @@ Tienes que ver tus cinco productos:
 > primer minuto. Cuenta tus cajas de verdad y corrígelo desde el panel (paso 9). No hace falta
 > volver a tocar Supabase nunca más.
 
+### 2.4 — Agregar la columna de campañas
+
+Lo mismo con `supabase/migrations/004_campana.sql`. Agrega a los pedidos una columna que anota
+desde qué anuncio llegó cada persona (ver "Los links de tus anuncios" en el paso 11).
+
+> Si ya tenías el sitio funcionando antes del rediseño, **corre solo este archivo**: no toca
+> ningún pedido ni el stock. Y si se te olvida, la tienda sigue vendiendo igual; solo que no
+> se guarda de qué anuncio vino cada compra.
+
 ---
 
 ## Paso 3: Cuenta de Mercado Pago
@@ -563,16 +572,43 @@ Lee `public/productos/README.md`, pero en resumen:
 4. Vercel republica solo. En dos minutos las fotos están en la página, reemplazando las
    ilustraciones. **No hay que tocar nada de código.**
 
-También puedes dejar, en la carpeta `public/`:
+También puedes dejar, en la carpeta `public/` (qué foto es cada una está explicado con detalle
+en `docs/11-fotografia.md`):
 
-- `hero.jpg` — la foto grande del inicio (horizontal, 1600×1000 o más)
-- `logo.png` — tu escudo con fondo transparente
-- `og.jpg` — la imagen que se ve al compartir el link (1200×630). Si no la pones, se genera una
-  sola con la tipografía y los colores de la marca; ya se ve bien.
+| Archivo | Dónde aparece |
+|---|---|
+| `hero.jpg` | Arriba de todo en la portada: el tablero a medio enrollar (horizontal) |
+| `jugando-adulto.jpg` | Arriba de todo en `/jugadores` |
+| `medidas.jpg` | El rey junto a una huincha, en la sección de medidas de `/jugadores` |
+| `detalle.jpg` | La textura del tablero de cerca, en la misma sección |
+| `guardado.jpg` | El tablero enrollado en una mochila, en la misma sección |
+| `og.jpg` | La imagen que se ve al compartir el link (1200×630). Si no la pones, se genera una sola con el logo, la tipografía y los colores de la marca |
+
+Cada foto que no exista se reemplaza por una ilustración: la página nunca queda con un hueco.
+`jugando.jpg` ya tiene nombre reservado, pero todavía no se usa en ninguna parte.
+
+Los logos ya están: `logo.png` (para fondos claros) y `logo-oscuro.png` (para fondos oscuros).
+De `logo.png` salen solos el ícono de la pestaña, el ícono de la pantalla de inicio del celular
+y la imagen para compartir. Si cambias el logo, reemplaza esos dos archivos con el mismo nombre.
 
 ---
 
 ## Paso 11: Meta Pixel y Google Analytics (opcional)
+
+### Los links de tus anuncios
+
+El titular de la portada cambia según el link con que llega la gente. Usa estos en tus anuncios
+para que la página abra diciendo lo mismo que prometió el anuncio:
+
+| Link | Titular |
+|---|---|
+| `lacasadelestratega.cl/?c=pantalla` | Una hora de ajedrez es una hora que no fue de pantalla. |
+| `lacasadelestratega.cl/?c=juntos` | El mejor regalo para tu hijo eres tú, sentado al frente. |
+| `lacasadelestratega.cl/?c=pensar` | Que aprenda a pensar dos jugadas más adelante. |
+| `lacasadelestratega.cl/jugadores?c=practico` | La página para quien ya sabe jugar |
+
+Cada pedido guarda de cuál vino. Para ver qué ángulo vende más, la consulta lista para copiar
+está al final de `supabase/migrations/004_campana.sql`.
 
 Solo si vas a hacer publicidad. Sin esto la página funciona perfecto.
 
@@ -615,15 +651,11 @@ Solo si vas a hacer publicidad. Sin esto la página funciona perfecto.
 ### 🟡 Lo primero que deberías hacer después
 
 - [ ] **Las fotos de los cinco productos.** Es lo que más va a mover tus ventas.
-- [ ] Tu **logo real** en `public/logo.png`. Mientras tanto se usa un escudo dibujado que se ve
-      bien pero no es el tuyo.
 - [ ] Guarda todas las llaves en un **gestor de contraseñas**, no en un papel ni en un chat.
 
 ### 🟢 Cuando tengas tiempo
 
 - [ ] Activar la CSP en modo bloqueante (paso 8).
-- [ ] Exportar un `apple-touch-icon.png` desde tu logo, para que se vea bonito cuando alguien
-      guarde la página en la pantalla de inicio del celular.
 - [ ] Configurar Meta Pixel si vas a hacer publicidad.
 
 ---

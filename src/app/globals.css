@@ -70,12 +70,18 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-h1, h2, h3, h4 {
-  font-family: var(--font-display);
-  color: var(--color-carbon);
-  line-height: 1.02;
-  letter-spacing: -0.015em;
-  text-wrap: balance;
+/* En @layer base para que las utilidades de Tailwind (que viven en su capa
+   `utilities`) puedan cambiarles el color o el interlineado. Fuera de una capa,
+   esta regla les ganaba siempre: los títulos de la sección oscura quedaban
+   carbón sobre carbón. */
+@layer base {
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    color: var(--color-carbon);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
 }
 
 /* Los números —precios sobre todo— con ancho fijo para que no bailen. */

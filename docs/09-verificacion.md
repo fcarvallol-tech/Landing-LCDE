@@ -337,3 +337,37 @@ versionado con las versiones fijadas.
 Las tres pendientes (5, 6 y 9) no se pueden resolver sin credenciales reales ni un navegador, y
 están todas cubiertas por el paso 7 de `PUESTA-EN-MARCHA.md`. **La compra de prueba con
 credenciales `TEST-` de Mercado Pago no es opcional**: es lo que cierra este checklist.
+
+---
+
+## Rediseño — verificación del 6 de octubre de 2026
+
+Después de aplicar `docs/12-rediseno.md`:
+
+- **`npm run build` y `npx tsc --noEmit`**: sin errores. 21 páginas generadas, entre ellas
+  `/jugadores`, las cinco `/comprar/[id]` y las dos variantes `/campana/juntos` y
+  `/campana/pensar`.
+- **`scripts/verificar-seguridad.mjs`**: **17 de 17** comprobaciones pasan, igual que antes.
+  Precio inyectado → 400, comuna fuera de cobertura → 400, webhook con firma inválida → 401,
+  panel sin sesión → redirige / 401, cabeceras y CSP presentes.
+- **Campaña en el checkout**: `"campana": "juntos"` pasa la validación; `"campana": "hackeo"`
+  → **HTTP 400**. El cuerpo que manda el navegador sigue sin llevar ni un precio: solo ids,
+  cantidades, datos de entrega y la campaña.
+- **Prueba del hero** (navegador headless, sin hacer scroll), borde superior de la primera
+  tarjeta respecto del alto de la ventana:
+
+  | Ventana | `/` | `/?c=juntos` | `/?c=pensar` |
+  |---|---|---|---|
+  | 375 × 667 | 606 / 667 ✓ | 606 / 667 ✓ | 606 / 667 ✓ |
+  | 390 × 664 | 608 / 664 ✓ | 608 / 664 ✓ | 608 / 664 ✓ |
+  | 1280 × 720 | 583 / 720 ✓ | 583 / 720 ✓ | 583 / 720 ✓ |
+  | 1440 × 900 | 584 / 900 ✓ | 584 / 900 ✓ | 584 / 900 ✓ |
+
+- **Compra directa recorrida de punta a punta**: "Lo quiero" del Pack CM → `/comprar/cm` →
+  "Súmale el reloj y te llevas el despacho gratis" → Agregar → la barra marca "Despacho gratis
+  conseguido" y el total queda en $54.980 → formulario → envío. Con la base de datos falsa de
+  local, el servidor responde 503 al verificar stock, que es lo esperado.
+- Sin desborde horizontal en ninguna de las medidas probadas.
+
+**PENDIENTE PARA FELIPE**: correr `supabase/migrations/004_campana.sql` y hacer una compra de
+prueba entrando por `/?c=juntos`; el pedido debe quedar con `campana = 'juntos'`.

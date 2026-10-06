@@ -20,9 +20,13 @@ Otras imágenes:
 
 | Archivo | Uso |
 |---|---|
-| `../hero.jpg` | Foto grande del inicio de la página (idealmente horizontal, 1600×1000 o más) |
-| `../logo.png` | Escudo de la marca, fondo transparente |
+| `../hero.jpg` | Foto grande del inicio: el tablero a medio enrollar (horizontal, 1600×1000 o más) |
+| `../jugando-adulto.jpg` | Inicio de `/jugadores` |
+| `../medidas.jpg`, `../detalle.jpg`, `../guardado.jpg` | Sección de medidas de `/jugadores` |
+| `../logo.png` / `../logo-oscuro.png` | Logo para fondos claros / oscuros (ya están) |
 | `../og.jpg` | Imagen que se ve al compartir el link (1200×630) |
+
+Qué foto es cada una, y cómo sacarlas, en `docs/11-fotografia.md`.
 
 ## Recomendaciones
 

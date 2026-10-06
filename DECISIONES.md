@@ -64,8 +64,8 @@ Ninguna contradice `docs/`; donde hubo ambigüedad, elegí la opción razonable 
 
 ## Diseño
 
-- **Las secciones siguen exactamente el orden de `docs/07-copy-y-contenido.md §C`**: beneficios
-  antes que packs. Comercialmente uno pondría los packs primero, pero el documento manda.
+- ~~Las secciones siguen exactamente el orden de `docs/07 §C`: beneficios antes que packs.~~
+  Reemplazada en el rediseño: ver abajo.
 - **El titular es "Una hora de ajedrez es una hora que no fue de pantalla"**, elegido de la
   lista autorizada de `docs/07 §D`. No inventé uno nuevo.
 - **Las piezas de ajedrez suben de rango junto con el pack**: peón para el Tradicional, alfil
@@ -91,6 +91,108 @@ Ninguna contradice `docs/`; donde hubo ambigüedad, elegí la opción razonable 
 
 - **No hay CAPTCHA.** `docs/06-seguridad.md §5` lo descarta explícitamente.
 - **No hay modo oscuro.** `docs/03-marca-y-estilo.md` lo descarta explícitamente.
-- **`apple-touch-icon.png` no existe todavía.** El `favicon.svg` sí está, generado con el
-  escudo y la paleta. El PNG hay que exportarlo desde el logo real cuando exista
-  (`public/logo.png`); mientras tanto los navegadores usan el SVG sin problema.
+- ~~`apple-touch-icon.png` no existe todavía.~~ Resuelto en el rediseño: ver abajo.
+
+## Rediseño (octubre de 2026, `docs/12-rediseno.md`)
+
+### Estructura
+
+- **Los packs van inmediatamente después del hero**, antes que los beneficios. Es la única
+  forma de pasar la prueba de `docs/12 §3` (que las tarjetas asomen en la primera pantalla).
+  El resto de las secciones mantiene el orden de `docs/07 §C`.
+- **La franja de cobertura con las 9 comunas pasó del hero a justo debajo de las tarjetas.**
+  `docs/04` la pedía "cerca del hero", pero dentro de un hero bajo empujaba los productos fuera
+  de la pantalla. La barra de anuncio dice "Santiago oriente" desde la primera línea, y las 9
+  comunas siguen en la franja, en Cobertura, en la FAQ y en el pie.
+- **La barra de anuncio no es sticky.** `docs/10` dice "el encabezado es sticky; nada más es
+  sticky en desktop". "Fija" en `docs/12` se leyó como mensaje fijo (sin rotar), no como posición.
+- **En celulares angostos la barra de anuncio ocupa dos líneas**, partida justo en el "·" (que
+  se esconde). La frase completa no cabe en 390 px a un tamaño legible, y achicarla hasta que
+  quepa la volvía ilegible.
+- **El logo oscuro no va dentro de la barra de anuncio**, aunque `docs/12 §2` la nombre como
+  fondo oscuro: el logo claro está justo debajo, al centro, y repetirlo a 16 px no suma. Sí
+  está en la sección de beneficios y en el pie, que ahora es oscuro.
+- **Los enlaces del encabezado son "Los packs" y "Por qué ajedrez"** (`docs/12`), no "Para
+  regalo" (`docs/10`): manda `docs/12`. En `/jugadores` son "Las medidas" y "Los packs", para no
+  mandar a ese público a la sección de beneficios cognitivos.
+- **En el celular, sin foto, el hero no muestra ilustración.** La ilustración del tablero
+  empujaba los productos fuera de la pantalla, y las tarjetas que vienen justo debajo ya traen
+  la suya. Con `hero.jpg`, la foto aparece como una franja baja arriba del titular.
+
+### Tarjetas y compra directa
+
+- **La compra directa es una página (`/comprar/[id]`), no un panel encima de la portada.** Así
+  el botón "atrás" del celular funciona como la gente espera, y el formulario se ve sin scroll
+  en desktop. Se pre-genera en el build y se revalida cada 60 s, igual que la portada.
+- **La compra directa no toca el carrito.** Lo que se elige ahí no se mezcla con lo que la
+  persona haya ido juntando, ni lo borra al pagar.
+- **El upsell sigue una regla única** (`src/lib/sugerencia.ts`): si a la compra le falta un
+  reloj, se sugiere el reloj; si ya trae uno (Pack IM, Pack GM o el reloj suelto), se sugiere el
+  Pack Tradicional. Sugerir un segundo reloj a quien compra el Pack IM no tiene sentido, y el
+  IM queda a $10 del despacho gratis.
+- **Sin selector de cantidad en la compra directa.** Casi nadie compra dos de lo mismo; quien
+  quiera, usa el carrito, que sí lo tiene.
+- **El carrito sigue accesible desde cada tarjeta** con un enlace discreto bajo el botón ("o
+  agrégalo al carrito"), además del ícono del encabezado.
+- **Una sola etiqueta por tarjeta**, en este orden de prioridad: Agotado → Últimas N unidades
+  → Más elegido. Se quitó "Tope de gama" del Pack GM (`docs/12 §5` solo nombra las otras dos);
+  el GM conserva su borde dorado.
+- **La edad recomendada va en la misma línea de "qué trae"** ("Tablero y piezas · desde 5
+  años"), porque `docs/01` pide mostrarla y `docs/12` no deja espacio para otra línea. En
+  `/jugadores` no se muestra.
+- **Se quitó el rótulo "Foto real muy pronto"** de las ilustraciones: hacía ver la página a
+  medio terminar, y `docs/12` pide que se vea bien hoy.
+- **El formulario valida al salir de cada campo** (`docs/10`), pero no marca un campo vacío
+  solo porque la persona pasó por él con el tabulador: eso se revisa al enviar.
+
+### Campañas (`?c=`)
+
+- **Las variantes de titular se sirven reescribiendo la URL en el proxy** (`/?c=juntos` →
+  `/campana/juntos`), no leyendo `searchParams` en la página. Leer `searchParams` volvía la
+  portada dinámica (una consulta a Supabase por visita, sin CDN); así sigue estática, y el
+  titular correcto viene en el HTML, sin parpadeo. Las rutas `/campana/*` no se indexan y su
+  canónica es `/`.
+- **La campaña se recuerda en `sessionStorage`** durante la visita, para que llegue al pedido
+  aunque la persona navegue a `/jugadores` o a `/comprar` (donde el `?c=` ya no está). Si llega
+  con otro `?c=` válido, gana el último.
+- **Sin `?c=` no se guarda nada** (la columna queda `null`), aunque el titular sea el de
+  `pantalla`. Así se distingue tráfico de anuncios de tráfico orgánico. Tampoco se asume
+  `practico` por entrar a `/jugadores`: se guarda solo si el link lo dice.
+- **El servidor acepta solo los cuatro valores conocidos** (Zod, y un `check` en la base).
+  Cualquier otro valor hace fallar la petición, igual que cualquier campo desconocido.
+- **Si falta la migración 004, el checkout reintenta sin la columna `campana`** y deja un aviso
+  en el log. Perder el dato de la campaña es aceptable; perder una venta porque alguien olvidó
+  correr un SQL, no.
+
+### `/jugadores`
+
+- **Titular: "Medidas de verdad. Caben en una mochila."** — la idea que pide `docs/12 §7`.
+- **Las medidas son exactamente las de `docs/12 §7`.** La frase que las enmarca dice que son
+  "el tamaño con que se juega en serio", sin mencionar torneos ni FIDE.
+- **El Pack IM lleva la etiqueta "El que más llevan los jugadores"** y va primero, seguido del
+  reloj; el Pack CM pierde "Más elegido" en esta página (ese dato es del público de regalo).
+  Los otros tres packs se muestran igual, más abajo, para que nadie tenga que volver a la
+  portada a buscarlos.
+- **Sin las fotos de prueba, la sección de medidas muestra un plano acotado** dibujado en
+  CSS, con el rey a escala real respecto del tablero (9,6 / 50).
+- **La FAQ de `/jugadores` es un subconjunto de la de `docs/07 §E`** (sin las preguntas sobre
+  niños o sobre aprender) más una sobre las medidas, con los números de `docs/12`.
+
+### Logo, íconos y estilos
+
+- **El favicon, el apple-touch-icon y la imagen OG se generan en el build desde
+  `public/logo.png`** (convención `icon.tsx` / `apple-icon.tsx` de Next 16). Si se cambia el
+  logo, se actualizan solos. Si el archivo faltara, caen al escudo de `public/icono.svg`. El
+  apple-touch-icon va sobre fondo crema porque iOS pinta de negro lo transparente.
+- **La imagen OG pasó de runtime edge a Node**, porque tiene que leer el logo desde el disco.
+- **Se corrigió un error que ya existía:** la regla base de `h1`–`h4` estaba fuera de una capa
+  de CSS y le ganaba a las clases de Tailwind v4, así que los títulos de las secciones oscuras
+  (beneficios) se pintaban carbón sobre carbón: eran invisibles. Ahora está en `@layer base`.
+- **`priority` de `next/image` está obsoleto en Next 16**; las imágenes del hero usan
+  `loading="eager"` y `fetchPriority="high"`. Hay una sola imagen de hero para móvil y desktop,
+  para que no se descargue dos veces.
+- **Los íconos de carrito y WhatsApp están dibujados a mano** con el trazo de las piezas
+  (`docs/03`: nada de sets de íconos). El de WhatsApp es un globo con auricular, no el logo
+  oficial.
+- **`public/Logo_opcion_1.PNG` y `Logo_opcion_2.PNG` no se versionaron.** Son copias idénticas
+  de `logo.png` y `logo-oscuro.png`, y todo lo que está en `public/` se publica.
