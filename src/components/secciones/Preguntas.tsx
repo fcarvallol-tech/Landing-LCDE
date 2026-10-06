@@ -1,4 +1,4 @@
-import { PREGUNTAS } from '@/lib/contenido'
+import { PREGUNTAS, type Pregunta } from '@/lib/contenido'
 import { NEGOCIO, WA_CONSULTA } from '@/lib/negocio'
 
 /**
@@ -7,8 +7,15 @@ import { NEGOCIO, WA_CONSULTA } from '@/lib/negocio'
  * Acordeón con <details>/<summary> nativos: accesible de fábrica, navegable
  * con teclado sin una línea de JavaScript y buscable con Ctrl+F en navegadores
  * modernos.
+ *
+ * /jugadores muestra solo las preguntas prácticas: nada sobre niños ni sobre
+ * aprender a jugar (docs/12 §7).
  */
-export function Preguntas() {
+export function Preguntas({
+  preguntas = PREGUNTAS,
+}: {
+  preguntas?: readonly Pregunta[]
+} = {}) {
   return (
     <section id="preguntas" className="bg-[var(--color-beige)]">
       <div className="contenedor seccion">
@@ -18,7 +25,7 @@ export function Preguntas() {
         </div>
 
         <div className="revelar mt-8 grid gap-x-8 gap-y-0 lg:grid-cols-2">
-          {PREGUNTAS.map((item) => (
+          {preguntas.map((item) => (
             <details
               key={item.pregunta}
               className="group border-b border-[var(--color-beige-borde)]"

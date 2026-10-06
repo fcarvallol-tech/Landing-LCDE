@@ -36,6 +36,8 @@
 
   /* Escala tipográfica de docs/03 (mobile → desktop con clamp) */
   --text-h1: clamp(2.5rem, 1.6rem + 4.5vw, 4.5rem);
+  /* Un escalón más bajo, solo para el hero (docs/12-rediseno.md §3). */
+  --text-h1-hero: clamp(2.125rem, 1.45rem + 3.2vw, 3.5rem);
   --text-h2: clamp(1.875rem, 1.35rem + 2.6vw, 3rem);
   --text-h3: clamp(1.25rem, 1.1rem + 0.75vw, 1.75rem);
   --text-cuerpo: clamp(1rem, 0.98rem + 0.2vw, 1.0625rem);

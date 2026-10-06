@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { IDS_PRODUCTO } from '@/lib/catalogo'
+import { CAMPANAS } from '@/lib/campanas'
 import {
   COMUNAS,
   HORARIOS_PREFERIDOS,
@@ -170,6 +171,12 @@ export const esquemaCheckout = z
      * un bot: nadie llena una dirección completa en ese tiempo.
      */
     tiempoFormulario: z.number().int().min(0).max(86_400_000).optional().default(0),
+    /**
+     * Ángulo del anuncio con que llegó la persona (`?c=`, docs/12 §6). Lista
+     * cerrada: cualquier otro valor hace fallar la petición, igual que un
+     * campo desconocido. No influye en nada del cobro; solo se guarda.
+     */
+    campana: z.enum(CAMPANAS).nullable().optional().default(null),
   })
   .strict()
 

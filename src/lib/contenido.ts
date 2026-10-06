@@ -138,3 +138,40 @@ export const PREGUNTAS: Pregunta[] = [
       'Sí. Marca la opción "es un regalo" al comprar y puedes dejarnos un mensaje para la tarjeta.',
   },
 ]
+
+// ── /jugadores (docs/12-rediseno.md §7) ─────────────────────────────────────
+
+/**
+ * Las medidas del juego, literales de docs/12 §7. Son el argumento central de
+ * /jugadores: la prueba de que no es un juguete. No agregar ninguna que no
+ * esté en ese documento.
+ */
+export const MEDIDAS = [
+  { valor: '50 × 50 cm', detalle: 'El tablero, con casillas de 5,8 cm' },
+  { valor: '9,6 cm', detalle: 'El alto del rey' },
+  { valor: 'Goma', detalle: 'Superficie tipo mousepad; piezas de plástico' },
+  { valor: 'Se enrolla', detalle: 'Y cabe en una mochila' },
+] as const
+
+/**
+ * FAQ de /jugadores: las preguntas prácticas de docs/07 §E, sin las que hablan
+ * de niños o de aprender a jugar, más una sobre las medidas.
+ */
+const PRACTICAS = new Set([
+  '¿A qué comunas llegan?',
+  '¿Cuánto cuesta el despacho?',
+  '¿Cuándo me llega?',
+  '¿Cómo puedo pagar?',
+  '¿Puedo comprar el reloj por separado?',
+  '¿Hacen boleta?',
+  '¿Y si no estoy en esas comunas?',
+])
+
+export const PREGUNTAS_JUGADORES: Pregunta[] = [
+  {
+    pregunta: '¿Qué medidas tiene?',
+    respuesta:
+      'El tablero mide 50 × 50 cm, con casillas de 5,8 cm, y el rey mide 9,6 cm. La superficie es de goma tipo mousepad y las piezas son de plástico. El tablero se enrolla.',
+  },
+  ...PREGUNTAS.filter((p) => PRACTICAS.has(p.pregunta)),
+]

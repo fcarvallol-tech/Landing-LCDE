@@ -14,8 +14,10 @@ export type IdProducto = (typeof IDS_PRODUCTO)[number]
 export type Producto = {
   id: IdProducto
   nombre: string
-  /** Bajada corta para la card. */
+  /** Bajada corta, para los lugares donde cabe una frase. */
   resumen: string
+  /** Qué trae, en una línea corta. Es lo único que dice la card (docs/12 §5). */
+  trae: string
   /** Lo que viene dentro, en viñetas. */
   contenido: string[]
   /** Precio final en CLP, IVA incluido, sin decimales. */
@@ -34,6 +36,7 @@ export const CATALOGO: Record<IdProducto, Producto> = {
     id: 'tradicional',
     nombre: 'Pack Tradicional',
     resumen: 'El punto de partida. Tablero y piezas para aprender jugando.',
+    trae: 'Tablero y piezas',
     contenido: ['Tablero de ajedrez', 'Juego completo de piezas'],
     precio: 15990,
     edadMin: 5,
@@ -44,6 +47,7 @@ export const CATALOGO: Record<IdProducto, Producto> = {
     id: 'cm',
     nombre: 'Pack CM · Candidato a Maestro',
     resumen: 'El juego completo más un bolso para llevarlo a todas partes.',
+    trae: 'Tablero, piezas y bolso',
     contenido: ['Tablero de ajedrez', 'Juego completo de piezas', 'Bolso para transportarlo'],
     precio: 29990,
     edadMin: 6,
@@ -55,6 +59,7 @@ export const CATALOGO: Record<IdProducto, Producto> = {
     id: 'im',
     nombre: 'Pack IM · Maestro Internacional',
     resumen: 'Con reloj: acá empiezan las partidas de verdad.',
+    trae: 'Tablero, piezas y reloj',
     contenido: ['Tablero de ajedrez', 'Juego completo de piezas', 'Reloj de ajedrez'],
     precio: 39990,
     edadMin: 8,
@@ -65,6 +70,7 @@ export const CATALOGO: Record<IdProducto, Producto> = {
     id: 'gm',
     nombre: 'Pack GM · Gran Maestro',
     resumen: 'Todo lo que necesita un jugador de club. El regalo grande.',
+    trae: 'Tablero, piezas, reloj y bolso profesional',
     contenido: [
       'Tablero de ajedrez',
       'Juego completo de piezas',
@@ -81,6 +87,7 @@ export const CATALOGO: Record<IdProducto, Producto> = {
     id: 'reloj',
     nombre: 'Reloj de ajedrez',
     resumen: 'El mismo reloj de los packs IM y GM, en su cajita. Regalo perfecto.',
+    trae: 'Reloj de ajedrez en su cajita',
     contenido: ['Reloj de ajedrez', 'Cajita original'],
     precio: 24990,
     edadMin: 8,

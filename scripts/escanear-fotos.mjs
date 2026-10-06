@@ -67,30 +67,50 @@ function buscarSuelta(base) {
 }
 
 const fotos = Object.fromEntries(IDS.map((id) => [id, fotosDe(id)]))
-const hero = buscarSuelta('hero')
-const logo = buscarSuelta('logo')
-const og = buscarSuelta('og')
+
+/**
+ * Fotos sueltas de public/ (docs/11-fotografia.md). La clave es el nombre de la
+ * constante que se exporta; el valor, el nombre del archivo sin extensión.
+ */
+const SUELTAS = {
+  FOTO_HERO: 'hero',
+  FOTO_LOGO: 'logo',
+  FOTO_LOGO_OSCURO: 'logo-oscuro',
+  FOTO_OG: 'og',
+  FOTO_MEDIDAS: 'medidas',
+  FOTO_GUARDADO: 'guardado',
+  FOTO_JUGANDO: 'jugando',
+  FOTO_JUGANDO_ADULTO: 'jugando-adulto',
+  FOTO_DETALLE: 'detalle',
+}
+
+const sueltas = Object.fromEntries(
+  Object.entries(SUELTAS).map(([constante, base]) => [constante, buscarSuelta(base)]),
+)
 
 const contenido = `// ⚠ ARCHIVO GENERADO AUTOMÁTICAMENTE. No lo edites a mano.
 // Lo escribe scripts/escanear-fotos.mjs antes de cada build.
-// Para agregar una foto: déjala en public/productos/ con el nombre del README
-// de esa carpeta, haz commit y push. Se regenera solo.
+// Para agregar una foto: déjala en public/productos/ o en public/ con el nombre
+// de docs/11-fotografia.md, haz commit y push. Se regenera solo.
 
 import type { IdProducto } from '@/lib/catalogo'
 
 export const FOTOS_PRODUCTO: Record<IdProducto, string[]> = ${JSON.stringify(fotos, null, 2)}
 
-export const FOTO_HERO: string | null = ${JSON.stringify(hero)}
-export const FOTO_LOGO: string | null = ${JSON.stringify(logo)}
-export const FOTO_OG: string | null = ${JSON.stringify(og)}
+${Object.entries(sueltas)
+  .map(([constante, ruta]) => `export const ${constante}: string | null = ${JSON.stringify(ruta)}`)
+  .join('\n')}
 `
 
 if (!existsSync(dirname(salida))) mkdirSync(dirname(salida), { recursive: true })
 writeFileSync(salida, contenido, 'utf8')
 
 const total = Object.values(fotos).reduce((a, f) => a + f.length, 0)
+const encontradas = Object.entries(SUELTAS)
+  .filter(([constante]) => sueltas[constante])
+  .map(([, base]) => base)
 console.log(
   `[fotos] ${total} foto(s) de producto` +
-    `${hero ? ', hero' : ''}${logo ? ', logo' : ''}${og ? ', og' : ''}` +
-    (total === 0 && !hero ? ' — se usan las ilustraciones de reemplazo' : ''),
+    (encontradas.length ? `, ${encontradas.join(', ')}` : '') +
+    (total === 0 ? ' — los packs usan las ilustraciones de reemplazo' : ''),
 )

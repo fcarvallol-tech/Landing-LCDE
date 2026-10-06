@@ -1,13 +1,16 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { COOKIE_SESION, sesionValida } from '@/lib/sesion'
+import { esCampanaConVariante, leerCampana } from '@/lib/campanas'
 
 /**
  * Proxy (lo que en versiones anteriores de Next.js se llamaba middleware).
- * Hace dos cosas:
+ * Hace tres cosas:
  *
  *  1. Protege /admin/* y /api/admin/* (docs/06-seguridad.md §7).
  *  2. Arma la Content-Security-Policy con un nonce distinto por petición
  *     (docs/06-seguridad.md §6).
+ *  3. Sirve la variante de titular que pide el anuncio (`/?c=juntos`), sin
+ *     cambiar la URL (docs/12-rediseno.md §6).
  *
  * El webhook de Mercado Pago queda deliberadamente fuera: tiene que poder
  * llamarlo Mercado Pago sin sesión. Su protección es la firma, no una cookie.
@@ -84,7 +87,18 @@ export async function proxy(peticion: NextRequest) {
   const cabeceras = new Headers(peticion.headers)
   cabeceras.set('x-nonce', nonce)
 
-  const respuesta = NextResponse.next({ request: { headers: cabeceras } })
+  // ── 3. Variante de titular por campaña ──────────────────────────────────
+  // /?c=juntos se sirve desde /campana/juntos, que se genera en el build igual
+  // que la portada. Así la página sigue siendo estática (rápida, desde el CDN)
+  // y el titular correcto llega en el HTML, sin parpadeo. La persona sigue
+  // viendo /?c=juntos en la barra de direcciones.
+  const campana = leerCampana(peticion.nextUrl.searchParams.get('c'))
+  const respuesta =
+    pathname === '/' && esCampanaConVariante(campana)
+      ? NextResponse.rewrite(new URL(`/campana/${campana}`, peticion.url), {
+          request: { headers: cabeceras },
+        })
+      : NextResponse.next({ request: { headers: cabeceras } })
 
   const bloqueante = process.env.CSP_MODO === 'bloqueante'
   respuesta.headers.set(

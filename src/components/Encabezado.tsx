@@ -1,84 +1,96 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Escudo } from '@/components/Piezas'
+import Link from 'next/link'
 import { useCarrito } from '@/components/CarritoProvider'
-import { NEGOCIO } from '@/lib/negocio'
-import { FOTO_LOGO } from '@/lib/fotos-generadas'
+import { Logo } from '@/components/Logo'
+import { IconoBolsa, IconoWhatsApp } from '@/components/Iconos'
+import { NEGOCIO, WA_CONSULTA } from '@/lib/negocio'
 
 /**
- * Encabezado fijo. Discreto: la landing es la protagonista, no la navegación.
- * Se opaca al hacer scroll para que el contenido no se lea a través de él.
+ * Encabezado (docs/12-rediseno.md §1).
+ *
+ * Logo al centro, como en deathwishcoffee.com. A la izquierda dos enlaces; a
+ * la derecha el carrito y WhatsApp, como íconos. En móvil solo el logo y los
+ * dos íconos.
+ *
+ * El carrito es un ícono discreto con un contador que aparece solo cuando hay
+ * algo adentro: para una visita nueva el carrito siempre está vacío y no puede
+ * ser lo más llamativo de la pantalla.
+ *
+ * Es lo único sticky de la página (docs/10).
  */
-export function Encabezado() {
-  const { totales, abrir } = useCarrito()
-  const [conFondo, setConFondo] = useState(false)
 
-  useEffect(() => {
-    const alScroll = () => setConFondo(window.scrollY > 24)
-    alScroll()
-    window.addEventListener('scroll', alScroll, { passive: true })
-    return () => window.removeEventListener('scroll', alScroll)
-  }, [])
+export type EnlaceEncabezado = { href: string; texto: string }
+
+export function Encabezado({
+  enlaces,
+  inicio = '/',
+}: {
+  /** Los dos enlaces de la izquierda. Cada página decide a dónde llevan. */
+  enlaces: EnlaceEncabezado[]
+  /** A dónde lleva el logo. En la portada, al ancla del hero. */
+  inicio?: string
+}) {
+  const { totales, abrir } = useCarrito()
+  const unidades = totales.unidades
 
   return (
-    <header
-      className={`sticky top-0 z-40 transition-colors duration-200 ${
-        conFondo
-          ? 'border-b border-[var(--color-beige-borde)] bg-[var(--color-crema)]/95 backdrop-blur-sm'
-          : 'border-b border-transparent'
-      }`}
-    >
-      <div className="contenedor flex h-16 items-center justify-between gap-4">
-        <a href="#inicio" className="flex items-center gap-2.5" aria-label={`${NEGOCIO.nombre}, ir al inicio`}>
-          {FOTO_LOGO ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={FOTO_LOGO} alt="" className="h-9 w-auto" width={36} height={40} />
-          ) : (
-            <Escudo className="h-9 w-auto text-[var(--color-terracota)]" />
-          )}
-          <span className="hidden text-sm leading-none font-[family-name:var(--font-display)] tracking-tight text-[var(--color-carbon)] sm:block">
-            La Casa
-            <br />
-            del Estratega
-          </span>
-        </a>
-
-        <nav className="hidden items-center gap-6 text-sm font-medium md:flex" aria-label="Secciones">
-          <a href="#packs" className="hover:text-[var(--color-terracota)]">
-            Los packs
-          </a>
-          <a href="#beneficios" className="hover:text-[var(--color-terracota)]">
-            Por qué ajedrez
-          </a>
-          <a href="#despacho" className="hover:text-[var(--color-terracota)]">
-            Despacho
-          </a>
-          <a href="#preguntas" className="hover:text-[var(--color-terracota)]">
-            Preguntas
-          </a>
-        </nav>
-
-        <button
-          type="button"
-          onClick={abrir}
-          className="btn btn-secundario relative min-h-[44px] px-4 py-2 text-sm"
-          aria-label={
-            totales.unidades > 0
-              ? `Abrir el carrito, ${totales.unidades} ${totales.unidades === 1 ? 'producto' : 'productos'}`
-              : 'Abrir el carrito, está vacío'
-          }
-        >
-          Carrito
-          {totales.unidades > 0 && (
-            <span
-              className="numeros grid size-5 place-items-center rounded-full bg-[var(--color-terracota)] text-[11px] font-bold text-[var(--color-crema)]"
-              aria-hidden="true"
+    <header className="sticky top-0 z-40 border-b border-[var(--color-beige-borde)] bg-[var(--color-crema)]/95 backdrop-blur-sm">
+      <div className="contenedor grid h-14 grid-cols-[1fr_auto_1fr] items-center gap-4 md:h-16">
+        <nav className="hidden items-center gap-7 text-sm font-medium md:flex" aria-label="Secciones">
+          {enlaces.map((enlace) => (
+            <Link
+              key={enlace.href}
+              href={enlace.href}
+              className="py-2 hover:text-[var(--color-terracota)] hover:underline hover:underline-offset-4"
             >
-              {totales.unidades}
-            </span>
-          )}
-        </button>
+              {enlace.texto}
+            </Link>
+          ))}
+        </nav>
+        {/* En móvil la columna izquierda queda vacía: mantiene el logo centrado. */}
+        <span className="md:hidden" aria-hidden="true" />
+
+        <Link
+          href={inicio}
+          className="grid place-items-center rounded-full"
+          aria-label={`${NEGOCIO.nombre}, ir al inicio`}
+        >
+          <Logo fondo="claro" tamano={40} prioridad className="size-8 md:size-10" />
+        </Link>
+
+        <div className="flex items-center justify-end gap-1">
+          <button
+            type="button"
+            onClick={abrir}
+            className="relative grid size-11 place-items-center rounded-lg text-[var(--color-carbon)] hover:bg-[var(--color-beige)]"
+            aria-label={
+              unidades > 0
+                ? `Abrir el carrito, ${unidades} ${unidades === 1 ? 'producto' : 'productos'}`
+                : 'Abrir el carrito, está vacío'
+            }
+          >
+            <IconoBolsa className="size-6" />
+            {unidades > 0 && (
+              <span
+                className="numeros absolute top-1 right-0.5 grid min-w-[18px] place-items-center rounded-full bg-[var(--color-terracota)] px-1 text-[10px] leading-[18px] font-bold text-[var(--color-crema)]"
+                aria-hidden="true"
+              >
+                {unidades}
+              </span>
+            )}
+          </button>
+
+          <a
+            href={WA_CONSULTA}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="grid size-11 place-items-center rounded-lg text-[var(--color-carbon)] hover:bg-[var(--color-beige)]"
+            aria-label="Escríbenos por WhatsApp (se abre en otra pestaña)"
+          >
+            <IconoWhatsApp className="size-6" />
+          </a>
+        </div>
       </div>
     </header>
   )

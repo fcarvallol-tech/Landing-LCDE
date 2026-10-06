@@ -149,6 +149,7 @@ export async function POST(peticion: NextRequest) {
       total: totales.total,
       acepta_terminos: datos.consentimientos.terminos,
       acepta_marketing: datos.consentimientos.marketing,
+      campana: datos.campana,
       items: totales.lineas.map((linea) => ({
         producto_id: linea.id,
         // Foto del nombre y del precio al momento de comprar.

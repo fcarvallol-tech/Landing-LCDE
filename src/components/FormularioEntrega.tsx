@@ -5,7 +5,10 @@ import Link from 'next/link'
 import { COMUNAS, ETIQUETA_HORARIO, HORARIOS_PREFERIDOS } from '@/lib/logistica'
 import { WA_FUERA_DE_COBERTURA } from '@/lib/negocio'
 import { normalizarTelefono } from '@/lib/validacion'
-import { useCarrito } from '@/components/CarritoProvider'
+import { formatearPrecio } from '@/lib/catalogo'
+import { campanaRecordada } from '@/lib/campanas'
+import type { Totales } from '@/lib/precios'
+import type { Lineas } from '@/components/CarritoProvider'
 import { iniciarCheckout } from '@/lib/eventos'
 
 /**
@@ -17,6 +20,9 @@ import { iniciarCheckout } from '@/lib/eventos'
  *    revalida igual.
  *  - Honeypot invisible + marca de tiempo del montaje (docs/06 §5).
  *  - Cada campo con su <label>, su autocomplete y sus errores anunciados.
+ *  - Se valida al salir de cada campo, nunca mientras se escribe (docs/10).
+ *  - No sabe de dónde vienen los productos: lo usan el panel del carrito y la
+ *    pantalla de compra directa (docs/12 §4), cada uno con sus propias líneas.
  */
 
 type Errores = Record<string, string>
@@ -30,8 +36,24 @@ const CAMPOS_EN_ORDEN = [
   'terminos',
 ] as const
 
-export function FormularioEntrega({ onVolver }: { onVolver: () => void }) {
-  const { lineas, totales, vaciar } = useCarrito()
+export function FormularioEntrega({
+  lineas,
+  totales,
+  onVolver,
+  alIniciarPago,
+  mostrarTotal = false,
+}: {
+  /** Qué se compra. Solo `id` y `cantidad` viajan al servidor. */
+  lineas: Lineas
+  /** Solo para mostrar. El total que se cobra lo recalcula el servidor. */
+  totales: Totales
+  /** Si existe, se muestra "← Volver al carrito". */
+  onVolver?: () => void
+  /** Se llama justo antes de salir hacia Mercado Pago. */
+  alIniciarPago?: () => void
+  /** Muestra el total a pagar sobre el botón (en el carrito ya está al pie). */
+  mostrarTotal?: boolean
+}) {
   const idBase = useId()
 
   const [errores, setErrores] = useState<Errores>({})
@@ -79,6 +101,32 @@ export function FormularioEntrega({ onVolver }: { onVolver: () => void }) {
     return problemas
   }
 
+  /**
+   * Validación al salir de un campo: si quedó con algo escrito y está mal, se
+   * avisa; si estaba marcado y ya está bien, se limpia. Un campo vacío no se
+   * marca al pasar por él con el tabulador: eso se revisa al enviar.
+   */
+  function alSalirDeCampo(evento: React.FocusEvent<HTMLFormElement>) {
+    const campo = evento.target
+    if (!(campo instanceof HTMLInputElement || campo instanceof HTMLSelectElement)) return
+    const nombre = campo.name
+    if (!nombre || !(CAMPOS_EN_ORDEN as readonly string[]).includes(nombre)) return
+    if (nombre === 'terminos') return
+
+    const problema = validarEnCliente(new FormData(evento.currentTarget))[nombre]
+    const vacio = campo.value.trim() === ''
+
+    setErrores((previos) => {
+      if (problema && !vacio) return { ...previos, [nombre]: problema }
+      if (!problema && previos[nombre]) {
+        const siguientes = { ...previos }
+        delete siguientes[nombre]
+        return siguientes
+      }
+      return previos
+    })
+  }
+
   async function enviar(evento: React.FormEvent<HTMLFormElement>) {
     evento.preventDefault()
     if (enviando) return
@@ -107,6 +155,10 @@ export function FormularioEntrega({ onVolver }: { onVolver: () => void }) {
 
     // Fíjate en lo que NO va en este cuerpo: ni precios, ni total, ni envío.
     // El servidor los calcula desde su propio catálogo.
+    // El ángulo del anuncio con que llegó la persona, si llegó desde uno
+    // (docs/12 §6). Se guarda en el pedido para saber qué ángulo vende.
+    const campana = campanaRecordada()
+
     const cuerpo = {
       items,
       cliente: {
@@ -128,6 +180,7 @@ export function FormularioEntrega({ onVolver }: { onVolver: () => void }) {
       },
       apellidoSegundo: String(datos.get('apellidoSegundo') ?? ''),
       tiempoFormulario: Date.now() - montadoEn.current,
+      ...(campana ? { campana } : {}),
     }
 
     try {
@@ -167,9 +220,9 @@ export function FormularioEntrega({ onVolver }: { onVolver: () => void }) {
         return
       }
 
-      // El carrito ya está guardado como pedido en el servidor: vaciarlo acá
-      // evita que al volver de Mercado Pago la persona compre dos veces.
-      vaciar()
+      // El pedido ya está guardado en el servidor. Quien llama decide qué
+      // limpiar (el carrito se vacía para no comprar dos veces al volver).
+      alIniciarPago?.()
       window.location.href = url
     } catch {
       setErrorGeneral(
@@ -194,14 +247,16 @@ export function FormularioEntrega({ onVolver }: { onVolver: () => void }) {
   })
 
   return (
-    <form onSubmit={enviar} noValidate className="flex flex-col gap-4">
-      <button
-        type="button"
-        onClick={onVolver}
-        className="self-start text-sm font-semibold text-[var(--color-terracota)] underline underline-offset-2"
-      >
-        ← Volver al carrito
-      </button>
+    <form onSubmit={enviar} onBlur={alSalirDeCampo} noValidate className="flex flex-col gap-4">
+      {onVolver && (
+        <button
+          type="button"
+          onClick={onVolver}
+          className="self-start text-sm font-semibold text-[var(--color-terracota)] underline underline-offset-2"
+        >
+          ← Volver al carrito
+        </button>
+      )}
 
       {errorGeneral && (
         <div
@@ -280,6 +335,7 @@ export function FormularioEntrega({ onVolver }: { onVolver: () => void }) {
           <input
             {...props('email')}
             type="email"
+            inputMode="email"
             className="campo"
             autoComplete="email"
             maxLength={254}
@@ -458,6 +514,22 @@ export function FormularioEntrega({ onVolver }: { onVolver: () => void }) {
           <span>Quiero recibir novedades y ofertas de La Casa del Estratega.</span>
         </label>
       </div>
+
+      {mostrarTotal && (
+        <p className="flex items-baseline justify-between gap-4 rounded-lg bg-[var(--color-beige)] px-4 py-3">
+          <span className="text-sm">
+            Total a pagar
+            <span className="block text-xs text-[var(--color-gris)]">
+              {totales.envioEsGratis
+                ? 'Con despacho gratis'
+                : `Incluye ${formatearPrecio(totales.costoEnvio)} de despacho`}
+            </span>
+          </span>
+          <span className="precio text-xl font-extrabold text-[var(--color-carbon)]">
+            {formatearPrecio(totales.total)}
+          </span>
+        </p>
+      )}
 
       <button type="submit" className="btn btn-primario w-full text-base" disabled={enviando}>
         {enviando ? 'Llevándote al pago…' : 'Pagar con Mercado Pago'}

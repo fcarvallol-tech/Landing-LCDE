@@ -140,6 +140,8 @@ export type NuevoPedido = {
   total: number
   acepta_terminos: boolean
   acepta_marketing: boolean
+  /** Ángulo del anuncio (`?c=`). Null si la persona no llegó desde uno. */
+  campana: string | null
   items: { producto_id: string; nombre: string; precio_unit: number; cantidad: number }[]
 }
 
@@ -149,11 +151,25 @@ export async function crearPedido(
 ): Promise<{ id: string; numero: number }> {
   const { items, ...cabecera } = pedido
 
-  const { data, error } = await supabase()
+  let { data, error } = await supabase()
     .from('pedidos')
     .insert({ ...cabecera, estado: 'pendiente' })
     .select('id, numero')
     .single()
+
+  // Red de seguridad: si todavía no se corrió la migración 004, la columna
+  // `campana` no existe y el insert falla. Perder el dato de la campaña es
+  // aceptable; perder la venta, no. Se reintenta sin ella y se deja aviso.
+  if (error && esColumnaCampanaFaltante(error)) {
+    console.warn('[pedidos] falta la columna "campana": corre supabase/migrations/004_campana.sql')
+    const { campana: _omitida, ...sinCampana } = cabecera
+    void _omitida
+    ;({ data, error } = await supabase()
+      .from('pedidos')
+      .insert({ ...sinCampana, estado: 'pendiente' })
+      .select('id, numero')
+      .single())
+  }
 
   if (error || !data) {
     throw new Error(`No se pudo crear el pedido: ${error?.message ?? 'sin datos'}`)
@@ -173,6 +189,15 @@ export async function crearPedido(
   }
 
   return { id: pedidoId, numero: data.numero as number }
+}
+
+function esColumnaCampanaFaltante(error: { code?: string; message?: string }): boolean {
+  // PGRST204: PostgREST no encuentra la columna en su caché del esquema.
+  // 42703: Postgres no encuentra la columna.
+  return (
+    (error.code === 'PGRST204' || error.code === '42703') &&
+    (error.message ?? '').includes('campana')
+  )
 }
 
 export async function guardarPreferencia(

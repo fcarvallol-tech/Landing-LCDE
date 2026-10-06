@@ -1,40 +1,43 @@
 'use client'
 
-import Image from 'next/image'
-import { formatearPrecio, type Producto } from '@/lib/catalogo'
-import { FOTOS_PRODUCTO } from '@/lib/fotos-generadas'
-import { PiezaDeProducto } from '@/components/Piezas'
-import { useCarrito } from '@/components/CarritoProvider'
-import { verProducto } from '@/lib/eventos'
+import Link from 'next/link'
 import { useEffect, useRef } from 'react'
+import { formatearPrecio, type Producto } from '@/lib/catalogo'
+import { FotoProducto } from '@/components/FotoProducto'
+import { useCarrito } from '@/components/CarritoProvider'
+import { agregarAlCarrito, verProducto } from '@/lib/eventos'
 
 /**
- * Card de producto.
+ * Tarjeta de producto (docs/12-rediseno.md §5).
  *
- * Sobre la foto: mientras no exista el archivo en public/productos/, se dibuja
- * la pieza de ajedrez que corresponde al nivel del pack. Apenas Felipe suba la
- * foto con el nombre correcto, el script de build la detecta y aparece sola.
+ * Orden exacto, de arriba abajo: foto cuadrada → etiqueta → nombre → qué trae
+ * en una línea → precio grande → botón. Nada de párrafos de venta.
  *
- * La pieza no es decoración: sube de rango junto con el pack (peón → alfil →
- * caballo → rey), que es exactamente lo que promete el naming CM/IM/GM.
+ * "Lo quiero" lleva directo a la pantalla de compra de ese pack, saltándose el
+ * carrito (docs/12 §4). El carrito sigue ahí para quien quiera sumar varias
+ * cosas, con un enlace discreto debajo del botón.
  */
 export function CardProducto({
   producto,
   agotado,
   mostrarUltimas,
   stock,
-  destacado,
+  etiqueta,
+  mostrarEdad = true,
 }: {
   producto: Producto
   agotado: boolean
   mostrarUltimas: boolean
   stock: number
-  destacado: boolean
+  /**
+   * Texto de la etiqueta destacada. Si no se pasa, se usa la del catálogo
+   * ("Más elegido" en el Pack CM). `null` la apaga.
+   */
+  etiqueta?: string | null
+  /** En /jugadores no se habla de edades (docs/12 §7). */
+  mostrarEdad?: boolean
 }) {
-  const { agregar, lineas } = useCarrito()
-  const enCarrito = lineas[producto.id] ?? 0
-  const fotos = FOTOS_PRODUCTO[producto.id]
-  const foto = fotos[0]
+  const { agregar } = useCarrito()
   const cardRef = useRef<HTMLElement>(null)
   const yaVisto = useRef(false)
 
@@ -60,122 +63,101 @@ export function CardProducto({
   }, [producto.id, producto.nombre, producto.precio])
 
   const esDorado = producto.etiqueta === 'tope-de-gama'
+  const textoDestacado =
+    etiqueta === undefined
+      ? producto.etiqueta === 'mas-elegido'
+        ? 'Más elegido'
+        : null
+      : etiqueta
+
+  // Una sola etiqueta a la vez, para que signifique algo. La urgencia real
+  // (stock) gana sobre la de marketing.
+  const etiquetaVisible = agotado
+    ? { texto: 'Agotado', clase: 'bg-[var(--color-carbon)] text-[var(--color-crema)]' }
+    : mostrarUltimas
+      ? {
+          texto: stock === 1 ? 'Última unidad' : `Últimas ${stock} unidades`,
+          clase: 'bg-[var(--color-rojo)] text-white',
+        }
+      : textoDestacado
+        ? { texto: textoDestacado, clase: 'bg-[var(--color-terracota)] text-[var(--color-crema)]' }
+        : null
 
   return (
     <article
       ref={cardRef}
-      className={`card-elevable revelar flex flex-col overflow-hidden rounded-2xl border-2 bg-white ${
+      className={`card-elevable flex flex-col overflow-hidden rounded-2xl border-2 bg-white ${
         esDorado
           ? 'card-elevable-dorada border-[var(--color-dorado)] sombra-block-dorada'
           : 'border-[var(--color-carbon)] sombra-block'
-      } ${agotado ? 'opacity-60 grayscale' : ''} ${destacado ? 'lg:row-span-2' : ''}`}
+      } ${agotado ? 'opacity-60 grayscale' : ''}`}
     >
-      {/* Imagen o ilustración de reemplazo */}
+      {/* 1. Foto cuadrada (o la ilustración mientras no exista) */}
       <div
-        className={`relative aspect-square overflow-hidden border-b-2 ${
+        className={`relative aspect-square overflow-hidden border-b-2 bg-[var(--color-beige)] ${
           esDorado ? 'border-[var(--color-dorado)]' : 'border-[var(--color-carbon)]'
-        } bg-[var(--color-beige)]`}
+        }`}
       >
-        {foto ? (
-          <Image
-            src={foto}
-            alt={producto.alt}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover"
-          />
-        ) : (
-          <>
-            {/* Marca de agua de tablero + la pieza del nivel. */}
-            <div
-              className="tablero-marca-agua absolute inset-0 text-[var(--color-carbon)]"
-              aria-hidden="true"
-            />
-            <div className="absolute inset-0 grid place-items-center p-8">
-              <PiezaDeProducto
-                id={producto.id}
-                className={`h-full max-h-44 w-auto ${
-                  esDorado ? 'text-[var(--color-dorado)]' : 'text-[var(--color-terracota)]'
-                }`}
-              />
-            </div>
-            <p className="absolute inset-x-0 bottom-0 bg-[var(--color-beige)]/85 px-3 py-1.5 text-center text-[11px] tracking-wide text-[var(--color-gris)]">
-              Foto real muy pronto
-            </p>
-          </>
-        )}
-
-        {/* Etiquetas: una sola cosa a la vez para que signifiquen algo. */}
-        <div className="absolute top-3 left-3 flex flex-col items-start gap-2">
-          {producto.etiqueta === 'mas-elegido' && (
-            <span className="rounded-md bg-[var(--color-terracota)] px-2.5 py-1 text-[11px] font-[family-name:var(--font-display)] tracking-wider text-[var(--color-crema)] uppercase">
-              Más elegido
-            </span>
-          )}
-          {esDorado && (
-            <span className="rounded-md bg-[var(--color-dorado)] px-2.5 py-1 text-[11px] font-[family-name:var(--font-display)] tracking-wider text-[var(--color-carbon)] uppercase">
-              Tope de gama
-            </span>
-          )}
-        </div>
-
-        {mostrarUltimas && !agotado && (
-          <span className="absolute top-3 right-3 rounded-md bg-[var(--color-rojo)] px-2.5 py-1 text-[11px] font-bold text-white">
-            {stock === 1 ? 'Última unidad' : `Últimas ${stock} unidades`}
-          </span>
-        )}
-
-        {agotado && (
-          <span className="absolute top-3 right-3 rounded-md bg-[var(--color-carbon)] px-2.5 py-1 text-[11px] font-bold text-[var(--color-crema)]">
-            Agotado
-          </span>
-        )}
+        <FotoProducto
+          producto={producto}
+          dorado={esDorado}
+          sizes="(min-width: 1024px) 24rem, (min-width: 640px) 50vw, 100vw"
+        />
       </div>
 
-      {/* Contenido */}
-      <div className="flex flex-1 flex-col gap-3 p-5">
-        <div>
-          <h3 className="text-[1.0625rem] leading-tight sm:text-lg">{producto.nombre}</h3>
-          <p className="mt-1.5 text-sm leading-relaxed text-[var(--color-marron)]">
-            {producto.resumen}
-          </p>
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
+        {/* 2. Etiqueta. En grilla de varias columnas reserva su alto para que
+               los nombres queden alineados entre cards. */}
+        <div className="sm:min-h-[1.625rem]">
+          {etiquetaVisible && (
+            <span
+              className={`mb-2 inline-block rounded-md px-2 py-0.5 text-[11px] font-bold tracking-wider uppercase ${etiquetaVisible.clase}`}
+            >
+              {etiquetaVisible.texto}
+            </span>
+          )}
         </div>
 
-        <ul className="flex flex-col gap-1 text-sm text-[var(--color-marron)]">
-          {producto.contenido.map((linea) => (
-            <li key={linea} className="flex items-start gap-2">
-              <span
-                className="mt-[7px] size-1.5 shrink-0 bg-[var(--color-terracota)]"
-                aria-hidden="true"
-              />
-              {linea}
-            </li>
-          ))}
-        </ul>
+        {/* 3. Nombre */}
+        <h3 className="text-[1.0625rem] leading-tight sm:text-lg">{producto.nombre}</h3>
 
-        <p className="text-xs font-medium tracking-wide text-[var(--color-gris)] uppercase">
-          Desde {producto.edadMin} años
+        {/* 4. Qué trae, en una línea */}
+        <p className="mt-1 text-sm text-[var(--color-marron)]">
+          {producto.trae}
+          {mostrarEdad && (
+            <span className="text-[var(--color-gris)]"> · desde {producto.edadMin} años</span>
+          )}
         </p>
 
-        <div className="mt-auto flex flex-wrap items-end justify-between gap-3 pt-2">
-          <p className="precio text-2xl leading-none font-bold text-[var(--color-carbon)]">
-            {formatearPrecio(producto.precio)}
-          </p>
+        {/* 5. Precio */}
+        <p className="precio mt-auto pt-4 text-[1.75rem] leading-none font-extrabold text-[var(--color-carbon)]">
+          {formatearPrecio(producto.precio)}
+        </p>
 
-          <button
-            type="button"
-            onClick={() => agregar(producto.id)}
-            disabled={agotado}
-            className="btn btn-primario px-5"
-            aria-label={
-              agotado
-                ? `${producto.nombre}: agotado`
-                : `Agregar ${producto.nombre} al carrito`
-            }
-          >
-            {agotado ? 'Agotado' : enCarrito > 0 ? `Agregar otro (${enCarrito})` : 'Lo quiero'}
+        {/* 6. Botón */}
+        {agotado ? (
+          <button type="button" disabled className="btn btn-primario mt-4 w-full">
+            Agotado
           </button>
-        </div>
+        ) : (
+          <>
+            <Link
+              href={`/comprar/${producto.id}`}
+              onClick={() => agregarAlCarrito(producto.id, producto.nombre, producto.precio)}
+              className="btn btn-primario mt-4 w-full text-base"
+              aria-label={`Lo quiero: comprar ${producto.nombre}`}
+            >
+              Lo quiero
+            </Link>
+            <button
+              type="button"
+              onClick={() => agregar(producto.id)}
+              className="mx-auto mt-1.5 min-h-[44px] px-2 text-[0.8125rem] text-[var(--color-gris)] underline underline-offset-4 hover:text-[var(--color-terracota)]"
+            >
+              o agrégalo al carrito
+            </button>
+          </>
+        )}
       </div>
     </article>
   )

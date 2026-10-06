@@ -1,5 +1,6 @@
 import { BENEFICIOS, CIERRE_BENEFICIOS } from '@/lib/contenido'
 import { Dama } from '@/components/Piezas'
+import { Logo } from '@/components/Logo'
 
 /**
  * Por qué el ajedrez — la sección oscura (docs/03 y docs/07 §C.3).
@@ -24,7 +25,10 @@ export function Beneficios() {
 
       <div className="contenedor seccion relative z-10">
         <div className="revelar max-w-3xl">
-          <p className="eyebrow eyebrow-claro mb-3">Por qué el ajedrez</p>
+          <p className="eyebrow eyebrow-claro mb-3 flex items-center gap-2.5">
+            <Logo fondo="oscuro" tamano={32} className="size-8" />
+            Por qué el ajedrez
+          </p>
           <h2 className="text-[length:var(--text-h2)] text-[var(--color-crema)]">
             Lo que dice la evidencia. Y lo que no.
           </h2>

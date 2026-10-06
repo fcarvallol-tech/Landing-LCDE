@@ -64,6 +64,8 @@ export type FilaPedido = {
   mp_payment_id: string | null
   acepta_terminos: boolean
   acepta_marketing: boolean
+  /** Ángulo del anuncio con que llegó (docs/12 §6). Migración 004. */
+  campana: string | null
   creado_en: string
   pagado_en: string | null
   entregado_en: string | null

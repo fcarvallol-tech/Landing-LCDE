@@ -1,15 +1,18 @@
 import { ImageResponse } from 'next/og'
 import { FOTO_OG } from '@/lib/fotos-generadas'
+import { imagenDeMarca } from '@/lib/icono-marca'
 
 /**
  * Imagen que se ve al compartir el link (1200×630).
  *
  * Si algún día Felipe deja un `public/og.jpg`, se usa ese archivo. Mientras
  * tanto se genera una con la paleta y la tipografía de la marca, para que el
- * link nunca se comparta "pelado" en WhatsApp o Instagram.
+ * link nunca se comparta "pelado" en WhatsApp o Instagram. Lleva el logo real
+ * (public/logo.png) y, si faltara, el escudo dibujado.
  */
 
-export const runtime = 'edge'
+// Node y no edge: hay que leer el logo desde el disco.
+export const runtime = 'nodejs'
 export const contentType = 'image/png'
 export const size = { width: 1200, height: 630 }
 
@@ -20,6 +23,7 @@ export async function GET(peticion: Request) {
   }
 
   const casillas = Array.from({ length: 32 }, (_, i) => i)
+  const logo = await imagenDeMarca()
 
   return new ImageResponse(
     (
@@ -54,6 +58,8 @@ export async function GET(peticion: Request) {
           <div
             style={{
               display: 'flex',
+              alignItems: 'center',
+              gap: 20,
               fontSize: 26,
               letterSpacing: 4,
               color: '#A8452C',
@@ -61,6 +67,8 @@ export async function GET(peticion: Request) {
               textTransform: 'uppercase',
             }}
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={logo} width={84} height={84} alt="" />
             La Casa del Estratega
           </div>
 

@@ -6,6 +6,7 @@ import { useCarrito } from '@/components/CarritoProvider'
 import { BarraEnvioGratis } from '@/components/BarraEnvioGratis'
 import { FormularioEntrega } from '@/components/FormularioEntrega'
 import { PiezaDeProducto } from '@/components/Piezas'
+import { FotoProducto } from '@/components/FotoProducto'
 
 /**
  * Carrito como panel lateral (docs/07-copy-y-contenido.md §C).
@@ -21,8 +22,18 @@ const SELECTOR_ENFOCABLES =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
 export function PanelCarrito() {
-  const { abierto, cerrar, lineas, totales, stock, fijarCantidad, quitar, aviso, limpiarAviso } =
-    useCarrito()
+  const {
+    abierto,
+    cerrar,
+    lineas,
+    totales,
+    stock,
+    fijarCantidad,
+    quitar,
+    vaciar,
+    aviso,
+    limpiarAviso,
+  } = useCarrito()
 
   const [paso, setPaso] = useState<'carrito' | 'entrega'>('carrito')
   const panelRef = useRef<HTMLDivElement>(null)
@@ -166,11 +177,8 @@ export function PanelCarrito() {
                         key={id}
                         className="flex gap-3 rounded-xl border border-[var(--color-beige-borde)] bg-white p-3"
                       >
-                        <div className="grid size-16 shrink-0 place-items-center rounded-lg bg-[var(--color-beige)]">
-                          <PiezaDeProducto
-                            id={id}
-                            className="h-10 w-auto text-[var(--color-terracota)]"
-                          />
+                        <div className="relative size-16 shrink-0 overflow-hidden rounded-lg bg-[var(--color-beige)]">
+                          <FotoProducto producto={producto} sizes="64px" />
                         </div>
 
                         <div className="min-w-0 flex-1">
@@ -234,7 +242,14 @@ export function PanelCarrito() {
               </div>
             )
           ) : (
-            <FormularioEntrega onVolver={() => setPaso('carrito')} />
+            <FormularioEntrega
+              lineas={lineas}
+              totales={totales}
+              onVolver={() => setPaso('carrito')}
+              // El pedido ya quedó guardado en el servidor: vaciar el carrito
+              // evita que al volver de Mercado Pago la persona compre dos veces.
+              alIniciarPago={vaciar}
+            />
           )}
         </div>
 

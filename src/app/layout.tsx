@@ -6,6 +6,7 @@ import { NEGOCIO } from '@/lib/negocio'
 import { BannerCookies } from '@/components/BannerCookies'
 import { Analitica } from '@/components/Analitica'
 import { RevelarAlEntrar } from '@/components/RevelarAlEntrar'
+import { RegistroCampana } from '@/components/RegistroCampana'
 
 /**
  * Las fuentes se autohospedan con next/font: cero requests a Google en runtime.
@@ -71,10 +72,6 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
   },
-  icons: {
-    icon: [{ url: '/icono.svg', type: 'image/svg+xml' }],
-    apple: [{ url: '/apple-icon.png' }],
-  },
   formatDetection: { telephone: false },
 }
 
@@ -99,6 +96,7 @@ export default function RootLayout({
         <BannerCookies />
         <Analitica />
         <RevelarAlEntrar />
+        <RegistroCampana />
       </body>
     </html>
   )
