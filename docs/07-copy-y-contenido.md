@@ -79,7 +79,7 @@ pequeña; incluir la fuente **suma** confianza, no resta.
 ## C. Estructura de la página (orden de secciones)
 
 1. **Hero** — Titular emocional + subtítulo + CTA "Ver los packs" + franja de cobertura.
-2. **Franja de confianza** — Despacho gratis sobre $40.000 · Entrega personal en 9 comunas ·
+2. **Franja de confianza** — Despacho gratis desde $39.990 · Entrega personal en 9 comunas ·
    Pago seguro con Mercado Pago · Coordinación por WhatsApp.
 3. **Por qué el ajedrez** — Sección oscura, los 5 bloques de beneficios con su fuente.
 4. **Los packs** — Las 4 cajas + el reloj suelto. Cards con foto, contenido, edad, precio,
@@ -123,7 +123,7 @@ Lo Barnechea y Huechuraba. Por ahora entregamos solo ahí, porque la entrega la 
 nosotros mismos.
 
 **¿Cuánto cuesta el despacho?**
-Gratis en compras sobre $40.000. Bajo ese monto, $3.990.
+Gratis en compras desde $39.990. Bajo ese monto, $3.990.
 
 **¿Cuándo me llega?**
 Te escribimos por WhatsApp dentro de 24 horas hábiles para coordinar día y hora.

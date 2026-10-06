@@ -57,7 +57,7 @@ tráfico frío que viene de Instagram. Cambia todo.
 ## Reglas de estructura para esta página
 
 ### Encabezado
-- Barra de anuncio fija arriba: **"Despacho gratis sobre $40.000 · Entrega personal en
+- Barra de anuncio fija arriba: **"Despacho gratis desde $39.990 · Entrega personal en
   Santiago oriente"**. Un solo mensaje, sin rotación, sin cuenta regresiva.
 - Debajo, navegación con **logo al centro**. A la izquierda: `Los packs` y `Para regalo`.
   A la derecha: carrito y WhatsApp. En móvil el logo queda al centro y los enlaces se
@@ -102,7 +102,7 @@ compra dos, es demasiada ceremonia.
 **Ruta objetivo:** un botón en la tarjeta lleva directo a una pantalla única de compra con
 ese pack ya seleccionado, el formulario de entrega, y en la misma pantalla el upsell
 —*"súmale el reloj y te llevas el despacho gratis"*— con la barra de progreso hacia los
-$40.000. Un solo scroll entre el deseo y el pago.
+$39.990. Un solo scroll entre el deseo y el pago.
 
 El carrito sigue existiendo para quien quiere sumar cosas, pero deja de ser el camino
 obligatorio.

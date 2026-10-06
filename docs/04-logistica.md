@@ -49,7 +49,7 @@ En el carrito, cuando el subtotal esté bajo el umbral, mostrar una barra de pro
 > Te faltan **$X** para el despacho gratis.
 
 Con `$X = 39990 - subtotal`. Es el mecanismo de upsell más importante de la página: empuja
-del Pack Tradicional ($15.990) hacia el Pack IM ($39.990 + cualquier cosa) o hacia sumar el
+del Pack Tradicional ($15.990) hacia el Pack IM ($39.990, que llega justo al umbral) o hacia sumar el
 reloj ($24.990). Cuando se alcanza el umbral, la barra se completa y dice
 "Despacho gratis conseguido".
 

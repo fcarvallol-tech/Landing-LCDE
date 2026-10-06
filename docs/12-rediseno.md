@@ -16,7 +16,7 @@ derecha — el elemento más prominente de toda la página.
 **Cambios:**
 
 - **Barra de anuncio** arriba de todo, fondo carbón, texto crema, una línea:
-  `Despacho gratis sobre $40.000 · Entrega personal en Santiago oriente`
+  `Despacho gratis desde $39.990 · Entrega personal en Santiago oriente`
   Fija, sin rotación, sin cuenta regresiva, sin botón de cerrar.
 - **Logo al centro.** Es el patrón de deathwishcoffee.com que pidió Felipe por nombre.
   A la izquierda: `Los packs` y `Por qué ajedrez` (solo dos; eliminar `Despacho` y
@@ -68,7 +68,7 @@ Cuatro puntos donde la gente se cae, para una tienda donde casi nadie compra dos
 
 - El botón de cada tarjeta dice **`Lo quiero`** y lleva **directo a la pantalla de
   compra** con ese pack ya seleccionado y el formulario de entrega a la vista.
-- En esa misma pantalla, el upsell: la barra de progreso hacia los $40.000 y un bloque
+- En esa misma pantalla, el upsell: la barra de progreso hacia los $39.990 y un bloque
   `Súmale el reloj y te llevas el despacho gratis` con un botón para agregarlo sin salir.
 - El carrito **sigue existiendo** para quien quiera sumar varias cosas, pero deja de ser
   el camino obligatorio.

@@ -18,7 +18,7 @@ Los precios son **finales, IVA incluido**.
 - El **reloj suelto** viene en una cajita propia (mencionarlo: aporta a la percepción de regalo).
 - El reloj que se vende suelto es el mismo que va incluido en los packs IM y GM.
 - El Pack CM debe llevar la etiqueta visual **"Más elegido"** — es el punto dulce de precio y
-  además es el que cruza el umbral de despacho gratis ($40.000) cuando se suma cualquier otra cosa.
+  además es el que cruza el umbral de despacho gratis ($39.990) cuando se suma cualquier otra cosa.
 
 ### Edad recomendada (para mostrar en cada producto)
 
