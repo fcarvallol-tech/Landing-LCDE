@@ -9,7 +9,7 @@ import { ENVIO_GRATIS_DESDE } from '@/lib/logistica'
  * La regla es simple y la misma para todos:
  *  - Si ya hay despacho gratis, nada.
  *  - Si en la compra todavía no hay un reloj, el reloj: es el complemento
- *    natural de los packs sin reloj, y con cualquiera de ellos cruza $40.000.
+ *    natural de los packs sin reloj, y con cualquiera de ellos cruza $39.990.
  *  - Si ya hay reloj (Pack IM, Pack GM o el reloj suelto), el Pack Tradicional:
  *    un segundo tablero es lo único que tiene sentido sumar.
  *  - Nunca algo agotado ni algo que ya está en la compra.

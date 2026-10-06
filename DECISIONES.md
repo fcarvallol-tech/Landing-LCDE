@@ -128,8 +128,11 @@ Ninguna contradice `docs/`; donde hubo ambigüedad, elegí la opción razonable 
   persona haya ido juntando, ni lo borra al pagar.
 - **El upsell sigue una regla única** (`src/lib/sugerencia.ts`): si a la compra le falta un
   reloj, se sugiere el reloj; si ya trae uno (Pack IM, Pack GM o el reloj suelto), se sugiere el
-  Pack Tradicional. Sugerir un segundo reloj a quien compra el Pack IM no tiene sentido, y el
-  IM queda a $10 del despacho gratis.
+  Pack Tradicional. Sugerir un segundo reloj a quien compra el Pack IM no tiene sentido.
+- **El umbral de despacho gratis bajó de $40.000 a $39.990** (pedido de Felipe), para que el
+  Pack IM califique solo y no reciba un upsell por diez pesos de diferencia. Los textos de la
+  página salen de `ENVIO_GRATIS_DESDE` (`src/lib/logistica.ts`) salvo la FAQ y la descripción
+  para buscadores, que se actualizaron a mano.
 - **Sin selector de cantidad en la compra directa.** Casi nadie compra dos de lo mismo; quien
   quiera, usa el carrito, que sí lo tiene.
 - **El carrito sigue accesible desde cada tarjeta** con un enlace discreto bajo el botón ("o

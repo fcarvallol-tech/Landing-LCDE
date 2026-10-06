@@ -25,7 +25,7 @@ export function esComunaValida(valor: unknown): valor is Comuna {
 }
 
 /** Umbral de despacho gratis, sobre el SUBTOTAL de productos (antes del envío). */
-export const ENVIO_GRATIS_DESDE = 40000
+export const ENVIO_GRATIS_DESDE = 39990
 
 /** Costo de despacho bajo el umbral. */
 export const COSTO_ENVIO = 3990

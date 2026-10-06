@@ -35,20 +35,20 @@ Huechuraba
 
 | Condición | Costo |
 |---|---|
-| Subtotal ≥ **$40.000** | **Gratis** |
-| Subtotal < $40.000 | **$3.990** |
+| Subtotal ≥ **$39.990** | **Gratis** |
+| Subtotal < $39.990 | **$3.990** |
 
 - El umbral se evalúa sobre el **subtotal de productos**, antes del despacho.
 - El cálculo se hace **en el servidor**. El cliente nunca manda el costo de envío.
 - Define el umbral y el costo como constantes en un solo lugar
-  (`ENVIO_GRATIS_DESDE = 40000`, `COSTO_ENVIO = 3990`) para que se cambien en un archivo.
+  (`ENVIO_GRATIS_DESDE = 39990`, `COSTO_ENVIO = 3990`) para que se cambien en un archivo.
 
 ### Palanca de conversión (implementar)
 
 En el carrito, cuando el subtotal esté bajo el umbral, mostrar una barra de progreso con:
 > Te faltan **$X** para el despacho gratis.
 
-Con `$X = 40000 - subtotal`. Es el mecanismo de upsell más importante de la página: empuja
+Con `$X = 39990 - subtotal`. Es el mecanismo de upsell más importante de la página: empuja
 del Pack Tradicional ($15.990) hacia el Pack IM ($39.990 + cualquier cosa) o hacia sumar el
 reloj ($24.990). Cuando se alcanza el umbral, la barra se completa y dice
 "Despacho gratis conseguido".

@@ -12,4 +12,4 @@ export const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() || null
 
 export const TITULO = 'Packs de ajedrez para regalar — La Casa del Estratega'
 export const DESCRIPCION =
-  'Packs de ajedrez desde $15.990, entregados personalmente en la zona oriente de Santiago. Despacho gratis sobre $40.000 y pago seguro con Mercado Pago.'
+  'Packs de ajedrez desde $15.990, entregados personalmente en la zona oriente de Santiago. Despacho gratis sobre $39.990 y pago seguro con Mercado Pago.'

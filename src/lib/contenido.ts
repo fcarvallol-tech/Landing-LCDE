@@ -93,7 +93,7 @@ export const PREGUNTAS: Pregunta[] = [
   },
   {
     pregunta: '¿Cuánto cuesta el despacho?',
-    respuesta: 'Gratis en compras sobre $40.000. Bajo ese monto, $3.990.',
+    respuesta: 'Gratis en compras sobre $39.990. Bajo ese monto, $3.990.',
   },
   {
     pregunta: '¿Cuándo me llega?',
