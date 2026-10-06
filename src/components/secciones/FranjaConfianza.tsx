@@ -11,7 +11,7 @@ import { ENVIO_GRATIS_DESDE, COMUNAS } from '@/lib/logistica'
 
 const PUNTOS = [
   {
-    titulo: `Despacho gratis sobre ${formatearPrecio(ENVIO_GRATIS_DESDE)}`,
+    titulo: `Despacho gratis desde ${formatearPrecio(ENVIO_GRATIS_DESDE)}`,
     detalle: 'Bajo ese monto, $3.990.',
   },
   {

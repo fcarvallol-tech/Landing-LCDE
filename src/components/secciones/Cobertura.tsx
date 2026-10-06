@@ -56,7 +56,7 @@ export function Cobertura() {
             <h3 className="text-[1.0625rem]">Cuánto cuesta el despacho</h3>
             <dl className="mt-4 flex flex-col gap-3 text-[0.9375rem]">
               <div className="flex items-baseline justify-between gap-4 border-b border-[var(--color-beige-borde)] pb-3">
-                <dt>Compras sobre {formatearPrecio(ENVIO_GRATIS_DESDE)}</dt>
+                <dt>Compras desde {formatearPrecio(ENVIO_GRATIS_DESDE)}</dt>
                 <dd className="precio font-bold text-[var(--color-exito)]">Gratis</dd>
               </div>
               <div className="flex items-baseline justify-between gap-4">

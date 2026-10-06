@@ -16,7 +16,7 @@ export function BarraAnuncio() {
     <div className="bg-[var(--color-carbon)] text-[var(--color-crema)]">
       <p className="contenedor flex flex-wrap items-center justify-center gap-x-2 py-1.5 text-center text-[0.75rem] leading-snug font-medium tracking-wide sm:py-2 sm:text-[0.8125rem]">
         <span className="whitespace-nowrap">
-          Despacho gratis sobre{' '}
+          Despacho gratis desde{' '}
           <span className="numeros">{formatearPrecio(ENVIO_GRATIS_DESDE)}</span>
         </span>
         <span aria-hidden="true" className="hidden text-[var(--color-dorado)] min-[480px]:inline">

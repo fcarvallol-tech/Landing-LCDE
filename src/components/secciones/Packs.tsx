@@ -67,7 +67,7 @@ export function Packs({
             Entregamos personalmente
           </strong>{' '}
           en {COMUNAS.slice(0, -1).join(', ')} y {COMUNAS[COMUNAS.length - 1]}. Solo en esas
-          comunas. Despacho gratis sobre{' '}
+          comunas. Despacho gratis desde{' '}
           <span className="precio font-semibold">{formatearPrecio(ENVIO_GRATIS_DESDE)}</span>;
           bajo ese monto, <span className="precio">{formatearPrecio(COSTO_ENVIO)}</span>.
         </p>
