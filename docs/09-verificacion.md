@@ -371,3 +371,40 @@ Después de aplicar `docs/12-rediseno.md`:
 
 **PENDIENTE PARA FELIPE**: correr `supabase/migrations/004_campana.sql` y hacer una compra de
 prueba entrando por `/?c=juntos`; el pedido debe quedar con `campana = 'juntos'`.
+
+---
+
+## Franja del hero según la altura — 15 de octubre de 2026
+
+Con `public/hero.jpg` publicada, la franja de la foto empujaba las tarjetas fuera de la primera
+pantalla en los celulares bajos. Ahora la franja (por debajo de 1024 px de ancho) se muestra solo
+con `@media (min-height: 830px)`, y tiene un alto tope (`clamp(7.5rem, 40vw, 11rem)`) para que lo
+que ocupa dependa de la altura y no del ancho. Cuando está oculta, un `<source>` del `<picture>`
+entrega un pixel vacío y el celular no descarga la foto.
+
+**Cómo se calibró el 830.** En cada ventana se midió el borde superior de la primera tarjeta con la
+franja forzada a mostrarse: el peor caso es 784 px (390 de ancho). 830 deja al menos 46 px de
+tarjeta a la vista cada vez que la franja aparece.
+
+| Ventana | Con la franja forzada | Regla real: franja | Tarjeta | ¿Descarga la foto? |
+|---|---|---|---|---|
+| 375 × 667 | 776 (no asoma) | oculta | 606 ✓ | no |
+| 390 × 664 | 784 (no asoma) | oculta | 608 ✓ | no |
+| 360 × 800 | 768 | oculta | 604 ✓ | no |
+| 390 × 800 | 784 | oculta | 608 ✓ | no |
+| 375 × 812 | 776 | oculta | 606 ✓ | no |
+| 390 × 844 | 784 | visible | 784 ✓ | sí |
+| 414 × 896 | 771 | visible | 771 ✓ | sí |
+| 430 × 932 | 780 | visible | 780 ✓ | sí |
+| 768 × 1024 | 754 | visible | 754 ✓ | sí |
+| 820 × 1180 | 736 | visible | 736 ✓ | sí |
+| 1024 × 768 (desktop) | 667 | visible (columna derecha) | 667 ✓ | sí |
+| 1280 × 720 (desktop) | 583 | visible (columna derecha) | 583 ✓ | sí |
+| 1440 × 900 (desktop) | 584 | visible (columna derecha) | 584 ✓ | sí |
+
+En ninguna ventana fallan las dos cosas a la vez: o se ve la foto y asoman las tarjetas, o no se
+ve la foto y asoman las tarjetas.
+
+**No verificado:** `prefers-reduced-data` (el navegador de pruebas no lo puede simular y casi
+ningún navegador lo soporta hoy). Tampoco se probó en un iPhone real: Safari muestra y esconde
+sus barras, y conviene confirmar en el teléfono que la franja aparece cuando hay espacio.

@@ -115,6 +115,13 @@ Ninguna contradice `docs/`; donde hubo ambigüedad, elegí la opción razonable 
 - **Los enlaces del encabezado son "Los packs" y "Por qué ajedrez"** (`docs/12`), no "Para
   regalo" (`docs/10`): manda `docs/12`. En `/jugadores` son "Las medidas" y "Los packs", para no
   mandar a ese público a la sección de beneficios cognitivos.
+- **En el celular, la franja de la foto del hero depende de la altura de la pantalla, no del
+  ancho** (pedido de Felipe). Se muestra solo con `min-height: 830px`, calibrado midiendo
+  (`docs/09`), y tiene un alto tope para que el cálculo valga en cualquier ancho. Cuando no se
+  muestra, el `<picture>` entrega un pixel vacío para no gastar datos en una foto invisible.
+  Lo mismo si el navegador pide ahorrar datos (`prefers-reduced-data`). El número vive en dos
+  lugares (CSS y `ALTO_MINIMO_FRANJA` en `Hero.tsx`), porque una media query no puede leer una
+  variable; los dos están comentados apuntando al otro.
 - **En el celular, sin foto, el hero no muestra ilustración.** La ilustración del tablero
   empujaba los productos fuera de la pantalla, y las tarjetas que vienen justo debajo ya traen
   la suya. Con `hero.jpg`, la foto aparece como una franja baja arriba del titular.

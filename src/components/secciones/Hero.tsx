@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import { getImageProps } from 'next/image'
 import Link from 'next/link'
 import { Peon, Torre } from '@/components/Piezas'
 import { FOTO_HERO } from '@/lib/fotos-generadas'
@@ -16,10 +16,29 @@ import type { Titular } from '@/lib/campanas'
  * viene la persona (`?c=`, ver src/lib/campanas.ts).
  *
  * La foto `public/hero.jpg` (el tablero a medio enrollar) reemplaza al tablero
- * ilustrado apenas exista. En el celular la ilustración no se muestra: las
- * tarjetas que vienen justo debajo ya traen la suya, y el espacio vale más
- * mostrando productos.
+ * ilustrado apenas exista. En el computador va a la derecha. En el celular y
+ * la tablet es una franja baja arriba del titular, pero SOLO si la pantalla
+ * tiene altura suficiente para que las tarjetas sigan asomando con la franja
+ * puesta (ver ALTO_MINIMO_FRANJA). Sin foto, en el celular no se muestra
+ * ilustración: las tarjetas que vienen justo debajo ya traen la suya.
  */
+
+/**
+ * Alto mínimo de pantalla (px CSS) para mostrar la franja de la foto en el
+ * celular y la tablet. Calibrado midiendo el borde de la primera tarjeta con
+ * la franja puesta: ver docs/09-verificacion.md.
+ *
+ * ⚠ El mismo número está escrito en la clase `.hero-franja` de
+ * src/app/globals.css (una media query no puede leer una variable). Si cambias
+ * uno, cambia el otro.
+ */
+export const ALTO_MINIMO_FRANJA = 830
+
+/** Desde este ancho la foto va en la columna derecha (el `lg` de Tailwind). */
+const ANCHO_ESCRITORIO = 1024
+
+/** GIF transparente de 1×1: lo que "descarga" el navegador cuando no hay franja. */
+const PIXEL_VACIO = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
 export function Hero({ titular }: { titular: Titular }) {
   return (
     <section id="inicio" className="grano relative overflow-hidden">
@@ -66,21 +85,13 @@ export function Hero({ titular }: { titular: Titular }) {
 
         {/*
           Una sola imagen para los dos tamaños, así no se descarga dos veces.
-          Con foto: en el celular sube arriba del titular como una franja baja;
-          en el computador va a la derecha. Sin foto: la ilustración, solo en
-          el computador.
+          Con foto: en el computador va a la derecha; en el celular, franja
+          baja arriba del titular, solo si hay altura (clase .hero-franja).
+          Sin foto: la ilustración, solo en el computador.
         */}
         {FOTO_HERO ? (
-          <div className="relative order-first aspect-[16/7] overflow-hidden rounded-xl border-2 border-[var(--color-carbon)] lg:order-none lg:aspect-[3/2] lg:rounded-2xl lg:shadow-[3px_3px_0_var(--color-carbon)]">
-            <Image
-              src={FOTO_HERO}
-              alt="Un tablero de ajedrez de La Casa del Estratega a medio enrollar"
-              fill
-              loading="eager"
-              fetchPriority="high"
-              sizes="(min-width: 1024px) 46vw, 100vw"
-              className="object-cover"
-            />
+          <div className="hero-franja relative order-first h-[clamp(7.5rem,40vw,11rem)] overflow-hidden rounded-xl border-2 border-[var(--color-carbon)] lg:order-none lg:aspect-[3/2] lg:h-auto lg:rounded-2xl lg:shadow-[3px_3px_0_var(--color-carbon)]">
+            <FotoHero src={FOTO_HERO} />
           </div>
         ) : (
           <div className="hidden lg:block">
@@ -122,5 +133,32 @@ export function TableroIlustrado({ className = '' }: { className?: string }) {
       <Peon className="absolute bottom-[16%] left-[19%] h-[26%] w-auto text-[var(--color-carbon)] drop-shadow-[2px_2px_0_rgba(250,243,232,0.45)]" />
       <Torre className="absolute top-[18%] right-[20%] h-[24%] w-auto text-[var(--color-carbon)] drop-shadow-[2px_2px_0_rgba(250,243,232,0.45)]" />
     </div>
+  )
+}
+
+/**
+ * La foto del hero dentro de un <picture>. Cuando la franja está oculta (poca
+ * altura, o el navegador pide ahorrar datos) el <source> entrega un pixel
+ * vacío: el celular no descarga una foto que no va a mostrar.
+ */
+function FotoHero({ src }: { src: string }) {
+  const { props } = getImageProps({
+    src,
+    alt: 'Un tablero de ajedrez de La Casa del Estratega a medio enrollar',
+    fill: true,
+    loading: 'eager',
+    fetchPriority: 'high',
+    sizes: '(min-width: 1024px) 46vw, 100vw',
+  })
+
+  const movil = `(max-width: ${ANCHO_ESCRITORIO - 1}px)`
+
+  return (
+    <picture>
+      <source media={`${movil} and (max-height: ${ALTO_MINIMO_FRANJA - 1}px)`} srcSet={PIXEL_VACIO} />
+      <source media={`${movil} and (prefers-reduced-data: reduce)`} srcSet={PIXEL_VACIO} />
+      {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
+      <img {...props} className="object-cover" />
+    </picture>
   )
 }

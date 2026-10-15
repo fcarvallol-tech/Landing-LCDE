@@ -233,6 +233,33 @@ p {
   }
 }
 
+/* ── Franja de la foto del hero en el celular (docs/12 §3) ─────────────────
+   Se muestra solo si la pantalla tiene altura para que, con la franja puesta,
+   las tarjetas de producto sigan asomando. Lo que decide es la altura, no el
+   ancho. 830px está calibrado midiendo (docs/09-verificacion.md) y es el mismo
+   número que ALTO_MINIMO_FRANJA en src/components/secciones/Hero.tsx.
+   En el computador la foto va en la columna derecha y siempre se muestra. */
+
+@media (max-width: 1023px) {
+  .hero-franja {
+    display: none;
+  }
+}
+
+@media (max-width: 1023px) and (min-height: 830px) {
+  .hero-franja {
+    display: block;
+  }
+}
+
+/* Si el navegador pide ahorrar datos, la franja del celular no se muestra (y
+   el <picture> no la descarga). Hoy casi ningún navegador lo soporta. */
+@media (max-width: 1023px) and (prefers-reduced-data: reduce) {
+  .hero-franja {
+    display: none;
+  }
+}
+
 /* ── Botones ─────────────────────────────────────────────────────────────── */
 
 .btn {
