@@ -6,19 +6,29 @@
 import type { IdProducto } from '@/lib/catalogo'
 
 export const FOTOS_PRODUCTO: Record<IdProducto, string[]> = {
-  "tradicional": [],
-  "cm": [],
-  "im": [],
-  "gm": [],
-  "reloj": []
+  "tradicional": [
+    "/productos/tradicional.png"
+  ],
+  "cm": [
+    "/productos/cm.png"
+  ],
+  "im": [
+    "/productos/im.png"
+  ],
+  "gm": [
+    "/productos/gm.png"
+  ],
+  "reloj": [
+    "/productos/reloj.png"
+  ]
 }
 
-export const FOTO_HERO: string | null = null
+export const FOTO_HERO: string | null = "/hero.jpg"
 export const FOTO_LOGO: string | null = "/logo.png"
 export const FOTO_LOGO_OSCURO: string | null = "/logo-oscuro.png"
-export const FOTO_OG: string | null = null
+export const FOTO_OG: string | null = "/og.jpg"
 export const FOTO_MEDIDAS: string | null = null
-export const FOTO_GUARDADO: string | null = null
+export const FOTO_GUARDADO: string | null = "/guardado.jpg"
 export const FOTO_JUGANDO: string | null = null
-export const FOTO_JUGANDO_ADULTO: string | null = null
+export const FOTO_JUGANDO_ADULTO: string | null = "/jugando-adulto.jpg"
 export const FOTO_DETALLE: string | null = null
